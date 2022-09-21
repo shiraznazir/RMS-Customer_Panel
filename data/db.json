@@ -1,0 +1,41 @@
+{
+    "items": [
+        {
+            "id": 1,
+            "name": "Cheese Burger",
+            "image": "https://davur.dexignzone.com/codeigniter/demo/public/assets/frontend/images/dish/1.jpg",
+            "price": "$6.00"
+        },
+        {
+            "id": 2,
+            "name": "French fries",
+            "image": "https://davur.dexignzone.com/codeigniter/demo/public/assets/frontend/images/dish/2.jpg",
+            "price": "$6.00"
+        },
+        {
+            "id": 3,
+            "name": "Veg Pizza",
+            "image": "https://davur.dexignzone.com/codeigniter/demo/public/assets/frontend/images/dish/3.jpg",
+            "price": "$6.00"
+        },
+        {
+            "id": 4,
+            "name": "Cheese Pizza",
+            "image": "https://davur.dexignzone.com/codeigniter/demo/public/assets/frontend/images/dish/4.jpg",
+            "price": "$6.00"
+        },
+        {
+            "id": 5,
+            "name": "Veg Sandwich",
+            "image": "https://davur.dexignzone.com/codeigniter/demo/public/assets/frontend/images/dish/5.jpg",
+            "price": "$6.00"
+        },
+        {
+            "id": 6,
+            "name": "French Fries",
+            "image": "https://davur.dexignzone.com/codeigniter/demo/public/assets/frontend/images/dish/6.jpg",
+            "price": "$6.00"
+        }
+
+    ]
+}
