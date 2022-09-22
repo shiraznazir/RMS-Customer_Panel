@@ -36,6 +36,32 @@
             "image": "https://davur.dexignzone.com/codeigniter/demo/public/assets/frontend/images/dish/6.jpg",
             "price": "$6.00"
         }
-
+    ],
+    "categories":[
+        {
+            "id": 1,
+            "name": "SOFT DRINK",
+            "image": "https://davur.dexignzone.com/codeigniter/demo/public/assets/frontend/images/food-icon/1.png"
+        },
+        {
+            "id": 2,
+            "name": "FAST FOOD",
+            "image": "https://davur.dexignzone.com/codeigniter/demo/public/assets/frontend/images/food-icon/2.png"
+        },
+        {
+            "id": 3,
+            "name": "PASTRY",
+            "image": "https://davur.dexignzone.com/codeigniter/demo/public/assets/frontend/images/food-icon/3.png"
+        },
+        {
+            "id": 4,
+            "name": "BURGER",
+            "image": "https://davur.dexignzone.com/codeigniter/demo/public/assets/frontend/images/food-icon/4.png"
+        },
+        {
+            "id": 5,
+            "name": "CHINESE",
+            "image": "https://davur.dexignzone.com/codeigniter/demo/public/assets/frontend/images/food-icon/5.png"
+        }
     ]
 }

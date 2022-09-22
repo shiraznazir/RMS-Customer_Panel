@@ -18,31 +18,16 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
-import { Link } from "react-router-dom";
-import Frontend from './Frontend'
+import { Link, Routes, Route } from "react-router-dom";
+import Frontend from "./Frontend";
+import Transaction from "./Transaction";
+import Booking from "./Booking";
+import OrderStatus from "./OrderStatus";
+import { Grid, Stack, Avatar } from "@mui/material";
+import Dashboard from "./Dashboard";
+import "../App.css";
 
 const drawerWidth = 240;
-
-const drawerItems = ["Dashboard", "People", "Wallet", "Food Items", "Reviews"];
-
-const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
-  ({ theme, open }) => ({
-    flexGrow: 1,
-    padding: theme.spacing(3),
-    transition: theme.transitions.create("margin", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    marginLeft: `-${drawerWidth}px`,
-    ...(open && {
-      transition: theme.transitions.create("margin", {
-        easing: theme.transitions.easing.easeOut,
-        duration: theme.transitions.duration.enteringScreen,
-      }),
-      marginLeft: 0,
-    }),
-  })
-);
 
 const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -61,17 +46,7 @@ const AppBar = styled(MuiAppBar, {
   }),
 }));
 
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
-  ...theme.mixins.toolbar,
-  justifyContent: "flex-end",
-}));
-
 export default function Navbar() {
-  const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
@@ -83,68 +58,68 @@ export default function Navbar() {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
-      <CssBaseline />
+    <Box sx={{ display: "flex", width: "100%" }}>
       <AppBar position="fixed" open={open}>
         <Toolbar>
           <IconButton
             color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
             edge="start"
             sx={{ mr: 2, ...(open && { display: "none" }) }}
           >
             <MenuIcon />
           </IconButton>
-          <Link to="/" style={{ textDecoration: "none", color: "white" }} >
-            <Typography variant="h3" noWrap component="div">
-              RMS
-            </Typography>
-          </Link>
+          <Grid container spacing={3}>
+            <Grid item xs={4} md={9}>
+              <Link to="/" style={{ textDecoration: "none", color: "white" }}>
+                <Typography
+                  variant={{ md: "h3" }}
+                  noWrap
+                  component="div"
+                  sx={{
+                    marginTop: { xs: 2, md: 2 },
+                  }}
+                >
+                  RMS
+                </Typography>
+              </Link>
+            </Grid>
+            <Grid item xs={8} md={3}>
+              <Grid
+                container
+                spacing={-20}
+                sx={{ marginLeft: { sx: 9, md: 20 } }}
+              >
+                <Grid id="profile-name" item xs={6} md={8}>
+                  <Typography sx={{ marginTop: 1, fontWeight: "bold" }}>
+                    Cindy Baker
+                  </Typography>
+                  <Typography>Super Admin</Typography>
+                </Grid>
+                <Grid
+                  item
+                  xs={4}
+                  md={4}
+                  sx={{
+                    marginTop: { xs: 0.5, md: 1 },
+                    marginRight: { xs: "0px" },
+                    marginLeft: { xs: 12 },
+                  }}
+                >
+                  <Avatar
+                    alt="Cindy Baker"
+                    src="https://mui.com/static/images/avatar/3.jpg"
+                    sx={{ width: 50, height: 50 }}
+                  />
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
         </Toolbar>
       </AppBar>
-      <Frontend />
-      <Drawer
-        sx={{
-          width: drawerWidth,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: drawerWidth,
-            boxSizing: "border-box",
-          },
-        }}
-        variant="persistent"
-        anchor="left"
-        open={open}
-      >
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          {drawerItems.map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
-      
-      <Main open={open}>
-        <DrawerHeader />
-      </Main>
-      
+
+      <Routes>
+        <Route path="/" element={<Frontend />} />
+      </Routes>
     </Box>
   );
 }
