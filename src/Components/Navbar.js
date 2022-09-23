@@ -1,31 +1,19 @@
 import * as React from "react";
-import { styled, useTheme } from "@mui/material/styles";
+import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import Drawer from "@mui/material/Drawer";
-import CssBaseline from "@mui/material/CssBaseline";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
 import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import { Link, Routes, Route } from "react-router-dom";
 import Frontend from "./Frontend";
-import Transaction from "./Transaction";
-import Booking from "./Booking";
-import OrderStatus from "./OrderStatus";
-import { Grid, Stack, Avatar } from "@mui/material";
-import Dashboard from "./Dashboard";
+import { Grid, Avatar } from "@mui/material";
+import Popover from '@mui/material/Popover';
 import "../App.css";
+import FootMenu from './FootMenu';
+
+const notifications = ["Profile", "Dashboard","setting","Logout"]
 
 const drawerWidth = 240;
 
@@ -57,9 +45,22 @@ export default function Navbar() {
     setOpen(false);
   };
 
+  const[anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const openPopover = Boolean(anchorEl);
+  const id = openPopover ? "simple-popover" : undefined;
+
   return (
     <Box sx={{ display: "flex", width: "100%" }}>
-      <AppBar position="fixed" open={open}>
+      <AppBar position="fixed" sx={{bgcolor: "#ff9999", height: '60px'}} open={open}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -69,7 +70,7 @@ export default function Navbar() {
             <MenuIcon />
           </IconButton>
           <Grid container spacing={3}>
-            <Grid item xs={4} md={9}>
+            <Grid item xs={5} md={9}>
               <Link to="/" style={{ textDecoration: "none", color: "white" }}>
                 <Typography
                   variant={{ md: "h3" }}
@@ -83,7 +84,7 @@ export default function Navbar() {
                 </Typography>
               </Link>
             </Grid>
-            <Grid item xs={8} md={3}>
+            <Grid item xs={7} md={3}>
               <Grid
                 container
                 spacing={-20}
@@ -106,9 +107,10 @@ export default function Navbar() {
                   }}
                 >
                   <Avatar
+                    onClick={handleClick}
                     alt="Cindy Baker"
                     src="https://mui.com/static/images/avatar/3.jpg"
-                    sx={{ width: 50, height: 50 }}
+                    sx={{ width: 50, height: 50, marginRight: '50px' }}
                   />
                 </Grid>
               </Grid>
@@ -116,10 +118,25 @@ export default function Navbar() {
           </Grid>
         </Toolbar>
       </AppBar>
-
+      <Popover
+        id={id}
+        open={openPopover}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+      >
+        {notifications.map((element)=>{
+          return <Typography sx={{ p: 2 }}>{element}</Typography>
+        })}
+        
+      </Popover>
       <Routes>
         <Route path="/" element={<Frontend />} />
       </Routes>
+      {/* <FootMenu /> */}
     </Box>
   );
 }

@@ -9,7 +9,6 @@ import {
   CardContent,
   CardMedia,
 } from "@mui/material";
-import Popover from '@mui/material/Popover';
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
 import { getItems } from "./api/posts";
@@ -20,11 +19,11 @@ const paperStyle = {
   padding: 5,
   paddingTop: 1,
   height: {
-    md: "75vh",
+    md: "60vh",
     xs: "70vh",
   },
   width: {
-    md: "30vw",
+    md: "40vw",
     xs: "70vw",
   },
   marginLeft: "13px",
@@ -60,18 +59,7 @@ function Frontend() {
       });
   }, []);
 
-  onst[(anchorEl, setAnchorEl)] = React.useState(null);
 
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
 
   return (
     <Box sx={{ bgcolor: "#fbfbfb", width: "100%" }}>
@@ -195,18 +183,6 @@ function Frontend() {
           </Grid>
         </Grid>
       </Grid>
-      <Popover
-        id={id}
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "left",
-        }}
-      >
-        <Typography sx={{ p: 2 }}>The content of the Popover.</Typography>
-      </Popover>
     </Box>
   );
 }
