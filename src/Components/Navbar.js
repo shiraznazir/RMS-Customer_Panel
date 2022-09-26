@@ -11,7 +11,6 @@ import Frontend from "./Frontend";
 import { Grid, Avatar } from "@mui/material";
 import Popover from '@mui/material/Popover';
 import "../App.css";
-import FootMenu from './FootMenu';
 
 const notifications = ["Profile", "Dashboard","setting","Logout"]
 

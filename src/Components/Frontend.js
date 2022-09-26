@@ -12,7 +12,14 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
 import { getItems } from "./api/posts";
+import { insertItems } from './api/posts';
 import { getCategories } from "./api/posts";
+import { getCart } from './api/posts';
+import { useSelector, useDispatch } from "react-redux";
+import { setItems } from './store/reducer/itemsSlice';
+import { setCart } from "./store/reducer/cartSlice";
+import StopCircleOutlinedIcon from '@mui/icons-material/StopCircleOutlined';
+import AddIcon from '@mui/icons-material/Add';
 import "../App.css";
 
 const paperStyle = {
@@ -33,25 +40,44 @@ const paperStyle = {
 const btnStyle = { bgcolor: "#FFA500", borderRadius: "20px" };
 
 function Frontend() {
-  const [foodItem, setFoodItem] = useState([]);
+
+  const items = useSelector((state) => state.items.items)
 
   const [categories, setCategories] = useState([]);
 
-  useEffect(() => {
+  const dispatch = useDispatch();
+
+  const fetchData = () => {
     getItems()
       .then((val) => {
         console.log(val.data);
-        setFoodItem(val.data);
+        dispatch(setItems(val.data));
       })
       .catch((err) => {
         console.log(err.message);
       });
-  }, []);
+  }
+
+  const fetchCardData = () => {
+    getCart().then((val) => {
+      dispatch(setCart(val.data));
+    }).catch((err) => {
+      console.log(err.message);
+    })
+  }
+
+  const addToCart = (element) => {
+    insertItems(element).then((res) => {
+      fetchCardData();
+    }).catch((err) => {
+      console.log(err.message);
+    })
+  }
 
   useEffect(() => {
     getCategories()
       .then((val) => {
-        console.log("Categories Items :- ", val.data);
+        //console.log("Categories Items :- ", val.data);
         setCategories(val.data);
       })
       .catch((err) => {
@@ -59,7 +85,12 @@ function Frontend() {
       });
   }, []);
 
+  useEffect(() => {
+    fetchData()
+    // fetchCardData();
+  }, []);
 
+  // console.log("Items :- ", items);
 
   return (
     <Box sx={{ bgcolor: "#fbfbfb", width: "100%" }}>
@@ -151,7 +182,7 @@ function Frontend() {
             spacing={1}
             sx={{ marginTop: "20px", marginLeft: "13px" }}
           >
-            {foodItem.map((element) => {
+            {items?.length && items?.map((element) => {
               return (
                 <Grid item xs={12} md={4}>
                   <Card
@@ -159,7 +190,7 @@ function Frontend() {
                       marginLeft: { sx: 7, md: 10 },
                       fontSize: 12,
                       width: "90%",
-                      height: 300,
+                      height: 350,
                       bgcolor: "#fff",
                     }}
                   >
@@ -170,20 +201,31 @@ function Frontend() {
                       image={element.image}
                     />
                     <CardContent>
-                      <Typography gutterBottom variant="h5" component="div">
-                        {element.name}
-                      </Typography>
-                      <Typography>{element.price}</Typography>
+                      <Stack container direction='row'>
+                        <Typography gutterBottom variant="h5" component="div">
+                          {element.name}
+                        </Typography>
+                        <Box sx={{ marginLeft: 2, color: element.isVeg ? "#009900" : "#FF0000" }} >
+                          <StopCircleOutlinedIcon />
+                        </Box>
+                      </Stack>
+                      <Grid container spacing={3}>
+                        <Grid item xs={8}>
+                          <Typography variant="h5">{element.price}</Typography>
+                        </Grid>
+                        <Grid item xs={4}>
+                          <Button variant="contained" onClick={() => addToCart(element)} sx={{ bgcolor: '#006400' }} >Add <AddIcon /> </Button>
+                        </Grid>
+                      </Grid>
                     </CardContent>
                   </Card>
                 </Grid>
               );
             })}
-            {/* Card 1 End */}
           </Grid>
         </Grid>
       </Grid>
-    </Box>
+    </Box >
   );
 }
 

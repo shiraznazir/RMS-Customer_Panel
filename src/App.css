@@ -46,3 +46,10 @@
   #profile-name { display: block; }   /* hide it elsewhere */
   #inputField {border-radius: 100px; height: 55px; font-size: 30px;}
 }
+
+.sticky {
+  position: fixed;
+  z-index: 100;
+  top: 0;
+  width: 100%;
+}
