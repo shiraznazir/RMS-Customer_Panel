@@ -4,15 +4,15 @@ import Box from "@mui/material/Box";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
 import { Link, Routes, Route } from "react-router-dom";
 import Frontend from "./Frontend";
 import { Grid, Avatar } from "@mui/material";
 import Popover from '@mui/material/Popover';
 import "../App.css";
+import RecentOrder from "./RecentOrder";
+import Login from './Login'
 
-const notifications = ["Profile", "Dashboard","setting","Logout"]
+const notifications = ["Profile", "Orders", "Logout"]
 
 const drawerWidth = 240;
 
@@ -44,7 +44,7 @@ export default function Navbar() {
     setOpen(false);
   };
 
-  const[anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -58,25 +58,18 @@ export default function Navbar() {
   const id = openPopover ? "simple-popover" : undefined;
 
   return (
-    <Box sx={{ display: "flex", width: "100%" }}>
-      <AppBar position="fixed" sx={{bgcolor: "#ff9999", height: '60px'}} open={open}>
+    <Box sx={{ display: "flex", width: "95%" }}>
+      <AppBar position="fixed" sx={{ bgcolor: "#ff9999", height: '60px' }} open={open}>
         <Toolbar>
-          <IconButton
-            color="inherit"
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: "none" }) }}
-          >
-            <MenuIcon />
-          </IconButton>
           <Grid container spacing={3}>
             <Grid item xs={5} md={9}>
               <Link to="/" style={{ textDecoration: "none", color: "white" }}>
                 <Typography
-                  variant={{ md: "h3" }}
+                  variant="h5"
                   noWrap
                   component="div"
                   sx={{
-                    marginTop: { xs: 2, md: 2 },
+                    marginTop: { xs: 1, md: 2 },
                   }}
                 >
                   RMS
@@ -109,7 +102,7 @@ export default function Navbar() {
                     onClick={handleClick}
                     alt="Cindy Baker"
                     src="https://mui.com/static/images/avatar/3.jpg"
-                    sx={{ width: 50, height: 50, marginRight: '50px' }}
+                    sx={{ width: 40, height: 40, marginLeft: '50px' }}
                   />
                 </Grid>
               </Grid>
@@ -127,13 +120,17 @@ export default function Navbar() {
           horizontal: "left",
         }}
       >
-        {notifications.map((element)=>{
-          return <Typography sx={{ p: 2 }}>{element}</Typography>
+        {notifications.map((element) => {
+          return <Link to={element} style={{ textDecoration: "none", color:"#000000" }}>
+            <Typography sx={{ p: 2 }}>{element}</Typography>
+          </Link>
         })}
-        
+
       </Popover>
       <Routes>
         <Route path="/" element={<Frontend />} />
+        <Route path='/recentorder' element={<RecentOrder />} />
+        <Route path='/login' element={<Login />} />
       </Routes>
       {/* <FootMenu /> */}
     </Box>

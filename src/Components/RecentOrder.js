@@ -6,7 +6,7 @@ import { getCart } from './api/posts';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
-function Cart() {
+function RecentOrder() {
 
   const cart = useSelector((state) => state.cart.cart);
 
@@ -82,4 +82,4 @@ function Cart() {
   )
 }
 
-export default Cart
+export default RecentOrder

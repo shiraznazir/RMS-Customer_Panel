@@ -32,19 +32,39 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
 }
 
 @media screen and (min-width: 0px) and (max-width: 700px) {
-  #profile-name { display: none; }  /* show it on small screens */
-  #inputField {padding-left: 10px;width: 85%; margin-Left:13px; border-radius: 50px; height: 30px; font-size: 20px;}
+  #profile-name {
+    display: none;
+  }
+
+  /* show it on small screens */
+  #inputField {
+    padding-left: 10px;
+    width: 90%;
+    margin-Left: 13px;
+    border-radius: 50px;
+    height: 30px;
+    font-size: 20px;
+  }
 }
 
 @media screen and (min-width: 700px) and (max-width: 1024px) {
-  #profile-name { display: block; }   /* hide it elsewhere */
-  #inputField {border-radius: 100px; height: 55px; font-size: 30px;}
+  #profile-name {
+    display: block;
+  }
+
+  /* hide it elsewhere */
+  #inputField {
+    border-radius: 100px;
+    height: 55px;
+    font-size: 30px;
+  }
 }
 
 .sticky {

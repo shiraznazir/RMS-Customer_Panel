@@ -180,7 +180,7 @@ function Frontend() {
           <Grid
             container
             spacing={1}
-            sx={{ marginTop: "20px", marginLeft: "13px" }}
+            sx={{ marginBottom: 5, marginTop: 2, marginLeft: 1 }}
           >
             {items?.length && items?.map((element) => {
               return (
@@ -189,7 +189,7 @@ function Frontend() {
                     sx={{
                       marginLeft: { sx: 7, md: 10 },
                       fontSize: 12,
-                      width: "90%",
+                      width: "95%",
                       height: 350,
                       bgcolor: "#fff",
                     }}
