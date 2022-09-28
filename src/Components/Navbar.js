@@ -6,13 +6,18 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import { Link, Routes, Route } from "react-router-dom";
 import Frontend from "./Frontend";
-import { Grid, Avatar } from "@mui/material";
-import Popover from '@mui/material/Popover';
+import { Grid, Avatar, Button } from "@mui/material";
+import Popover from "@mui/material/Popover";
 import "../App.css";
 import RecentOrder from "./RecentOrder";
-import Login from './Login'
+import Cart from "./Cart";
+import Profile from "./Profile";
+import Orders from "./Orders";
+import Login from "./Login";
+import { logout } from "./store/reducer/userSlice";
+import { useDispatch } from "react-redux";
 
-const notifications = ["Profile", "Orders", "Logout"]
+const notifications = ["Profile", "Orders", "Logout"];
 
 const drawerWidth = 240;
 
@@ -44,6 +49,15 @@ export default function Navbar() {
     setOpen(false);
   };
 
+  const dispatch = useDispatch();
+
+  const handleLogout = (e) => {
+    e.preventDefault();
+    dispatch(logout());
+    document.cookie = "mobileNo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "loggedIn=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  };
+
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -59,7 +73,11 @@ export default function Navbar() {
 
   return (
     <Box sx={{ display: "flex", width: "95%" }}>
-      <AppBar position="fixed" sx={{ bgcolor: "#ff9999", height: '60px' }} open={open}>
+      <AppBar
+        position="fixed"
+        sx={{ bgcolor: "#ff9999", height: "60px" }}
+        open={open}
+      >
         <Toolbar>
           <Grid container spacing={3}>
             <Grid item xs={5} md={9}>
@@ -102,7 +120,7 @@ export default function Navbar() {
                     onClick={handleClick}
                     alt="Cindy Baker"
                     src="https://mui.com/static/images/avatar/3.jpg"
-                    sx={{ width: 40, height: 40, marginLeft: '50px' }}
+                    sx={{ width: 40, height: 40, marginLeft: "50px" }}
                   />
                 </Grid>
               </Grid>
@@ -121,16 +139,27 @@ export default function Navbar() {
         }}
       >
         {notifications.map((element) => {
-          return <Link to={element} style={{ textDecoration: "none", color:"#000000" }}>
-            <Typography sx={{ p: 2 }}>{element}</Typography>
-          </Link>
+          return element == "Logout" ? (
+            <Typography sx={{ p: 2 }} onClick={(e) => handleLogout(e)}>
+              {element}
+            </Typography>
+          ) : (
+            <Link
+              to={element}
+              style={{ textDecoration: "none", color: "#000000" }}
+            >
+              <Typography sx={{ p: 2 }}>{element}</Typography>
+            </Link>
+          );
         })}
-
       </Popover>
       <Routes>
         <Route path="/" element={<Frontend />} />
-        <Route path='/recentorder' element={<RecentOrder />} />
-        <Route path='/login' element={<Login />} />
+        <Route path="/recentorder" element={<RecentOrder />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/orders" element={<Orders />} />
       </Routes>
       {/* <FootMenu /> */}
     </Box>
