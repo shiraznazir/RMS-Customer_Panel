@@ -9,11 +9,11 @@ function App() {
   
   const user = useSelector(selectUser);
 
-  var elements = document.cookie.split('=')[2];
+  var browerData = document.cookie.split('=')[2];
   
   return (
     <div>
-      {user || elements ? <><Navbar /><FootMenu /></> : <Login />}  
+      {user || browerData ? <><Navbar /><FootMenu /></> : <Login />}  
     </div>
   );
 }

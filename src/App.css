@@ -43,27 +43,38 @@
     display: none;
   }
 
-  /* show it on small screens */
   #inputField {
+    margin: 20px;
     padding-left: 10px;
-    width: 90%;
-    margin-Left: 13px;
+    width: 88%;
+    margin-left: 13px;
     border-radius: 50px;
     height: 30px;
     font-size: 20px;
   }
+
+  #login{
+    width: 70vw;
+  }
 }
 
-@media screen and (min-width: 700px) and (max-width: 1024px) {
+@media screen and (min-width: 700px) and (max-width: 1600px) {
   #profile-name {
     display: block;
   }
 
-  /* hide it elsewhere */
   #inputField {
-    border-radius: 100px;
-    height: 55px;
-    font-size: 30px;
+    margin: 20px;
+    padding-left: 10px;
+    width: 95%;
+    margin-left: 13px;
+    border-radius: 50px;
+    height: 30px;
+    font-size: 16px;
+  }
+
+  #login{
+    width: 20vw;
   }
 }
 

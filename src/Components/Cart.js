@@ -27,7 +27,7 @@ function Cart() {
   // console.log("Cart:- ", cart);
 
   return (
-    <Box width='90%' sx={{ marginTop: '70px', marginBottom: '70px' }}>
+    <Box width='90%' sx={{ marginBottom: '70px' }}>
       {/* <Paper> */}
       <Grid
         container
@@ -36,10 +36,9 @@ function Cart() {
       >
         {cart.length > 0 && cart.map((element) => {
           return (
-            <Grid item xs={12} md={4}>
+            <Grid item xs={12} md={3}>
               <Card
                 sx={{
-                  marginLeft: { sx: 10, md: 10 },
                   fontSize: 12,
                   width: "98%",
                   height: 350,

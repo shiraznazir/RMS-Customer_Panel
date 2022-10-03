@@ -7,7 +7,7 @@ const items = createSlice({
     initialState,
     reducers: {
         setItems: (state, action) => {
-            console.log("items action :- ", action.payload);
+            //console.log("items action :- ", action.payload);
             state.items = action.payload
         }
     }

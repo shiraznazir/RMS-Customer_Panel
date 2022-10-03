@@ -14,6 +14,7 @@ import Cart from "./Cart";
 import Profile from "./Profile";
 import Orders from "./Orders";
 import Login from "./Login";
+import SignUp from './SignUp';
 import { logout } from "./store/reducer/userSlice";
 import { useDispatch } from "react-redux";
 
@@ -54,8 +55,10 @@ export default function Navbar() {
   const handleLogout = (e) => {
     e.preventDefault();
     dispatch(logout());
-    document.cookie = "mobileNo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie = "loggedIn=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "mobileNo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie =
+      "loggedIn=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   };
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -72,49 +75,42 @@ export default function Navbar() {
   const id = openPopover ? "simple-popover" : undefined;
 
   return (
-    <Box sx={{ display: "flex", width: "95%" }}>
-      <AppBar
-        position="fixed"
-        sx={{ bgcolor: "#ff9999", height: "60px" }}
-        open={open}
-      >
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static">
         <Toolbar>
-          <Grid container spacing={3}>
-            <Grid item xs={5} md={9}>
+          <Grid
+            container
+            alignItems="center"
+            justifyContent="center"
+            spacing={4}
+          >
+            <Grid item xs={7.5} md={10}>
               <Link to="/" style={{ textDecoration: "none", color: "white" }}>
-                <Typography
-                  variant="h5"
-                  noWrap
-                  component="div"
-                  sx={{
-                    marginTop: { xs: 1, md: 2 },
-                  }}
-                >
+                <Typography variant="h5" noWrap component="div">
                   RMS
                 </Typography>
               </Link>
             </Grid>
-            <Grid item xs={7} md={3}>
-              <Grid
-                container
-                spacing={-20}
-                sx={{ marginLeft: { sx: 9, md: 20 } }}
-              >
-                <Grid id="profile-name" item xs={6} md={8}>
-                  <Typography sx={{ marginTop: 1, fontWeight: "bold" }}>
+            <Grid item md={2}>
+              {/* Inner -Grid */}
+              <Grid container spacing={0} justify="flex-end">
+                <Grid
+                  id="profile-name"
+                  item
+                  xs={6}
+                  md={7}
+                  justifyContent="flex-end"
+                >
+                  <Typography sx={{ fontWeight: "bold" }}>
                     Cindy Baker
                   </Typography>
                   <Typography>Super Admin</Typography>
                 </Grid>
                 <Grid
                   item
-                  xs={4}
-                  md={4}
-                  sx={{
-                    marginTop: { xs: 0.5, md: 1 },
-                    marginRight: { xs: "0px" },
-                    marginLeft: { xs: 12 },
-                  }}
+                  xs={2}
+                  md={3}
+                  justifyContent="flex-end"
                 >
                   <Avatar
                     onClick={handleClick}
@@ -138,13 +134,18 @@ export default function Navbar() {
           horizontal: "left",
         }}
       >
-        {notifications.map((element) => {
+        {notifications.map((element, index) => {
           return element == "Logout" ? (
-            <Typography sx={{ p: 2 }} onClick={(e) => handleLogout(e)}>
+            <Typography
+              key={index + Math.random()}
+              sx={{ p: 2 }}
+              onClick={(e) => handleLogout(e)}
+            >
               {element}
             </Typography>
           ) : (
             <Link
+              key={index + Math.random()}
               to={element}
               style={{ textDecoration: "none", color: "#000000" }}
             >
@@ -157,6 +158,7 @@ export default function Navbar() {
         <Route path="/" element={<Frontend />} />
         <Route path="/recentorder" element={<RecentOrder />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/signUp" element={<SignUp />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/orders" element={<Orders />} />

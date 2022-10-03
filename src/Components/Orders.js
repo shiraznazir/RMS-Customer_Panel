@@ -69,7 +69,7 @@ const styleTableHead = { fontWeight: "bold", fontSize: 10, color: "#010100", wid
 
 function Orders() {
     return (
-        <Box sx={{ bgcolor: "#fafafa", width: "100%", marginTop: '70px' }}>
+        <Box sx={{ bgcolor: "#fafafa", width: "100%", marginBottom: '50px' }}>
             {/* <Grid container>
                 <Grid item md={6}> */}
                     <Typography
