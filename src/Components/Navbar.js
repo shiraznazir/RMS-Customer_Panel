@@ -14,9 +14,9 @@ import Cart from "./Cart";
 import Profile from "./Profile";
 import Orders from "./Orders";
 import Login from "./Login";
-import SignUp from './SignUp';
 import { logout } from "./store/reducer/userSlice";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const notifications = ["Profile", "Orders", "Logout"];
 
@@ -40,8 +40,11 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 export default function Navbar() {
-  const [open, setOpen] = React.useState(false);
 
+  const [open, setOpen] = React.useState(false);
+  
+  const navigate = useNavigate() 
+  
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -54,6 +57,7 @@ export default function Navbar() {
 
   const handleLogout = (e) => {
     e.preventDefault();
+    navigate('/login')
     dispatch(logout());
     document.cookie =
       "mobileNo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -76,12 +80,12 @@ export default function Navbar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="fixed" >
         <Toolbar>
           <Grid
             container
-            alignItems="center"
-            justifyContent="center"
+            alignitems="center"
+            justifycontent="center"
             spacing={4}
           >
             <Grid item xs={7.5} md={10}>
@@ -99,7 +103,7 @@ export default function Navbar() {
                   item
                   xs={6}
                   md={7}
-                  justifyContent="flex-end"
+                  justifycontent="flex-end"
                 >
                   <Typography sx={{ fontWeight: "bold" }}>
                     Cindy Baker
@@ -110,7 +114,7 @@ export default function Navbar() {
                   item
                   xs={2}
                   md={3}
-                  justifyContent="flex-end"
+                  justifycontent="flex-end"
                 >
                   <Avatar
                     onClick={handleClick}
@@ -136,13 +140,13 @@ export default function Navbar() {
       >
         {notifications.map((element, index) => {
           return element == "Logout" ? (
-            <Typography
+            <Button
               key={index + Math.random()}
-              sx={{ p: 2 }}
+              sx={{ p: 2, color: '#000000', texttransform: "none" }}
               onClick={(e) => handleLogout(e)}
             >
               {element}
-            </Typography>
+            </Button>
           ) : (
             <Link
               key={index + Math.random()}
@@ -154,16 +158,15 @@ export default function Navbar() {
           );
         })}
       </Popover>
+      
       <Routes>
         <Route path="/" element={<Frontend />} />
         <Route path="/recentorder" element={<RecentOrder />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/signUp" element={<SignUp />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/orders" element={<Orders />} />
       </Routes>
-      {/* <FootMenu /> */}
     </Box>
   );
 }

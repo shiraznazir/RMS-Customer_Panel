@@ -7,13 +7,16 @@ import Login from './Components/Login';
 
 function App() {
   
-  const user = useSelector(selectUser);
+  const user1 = useSelector(selectUser);
+  const browerData = document.cookie.split('=')[2]
 
-  var browerData = document.cookie.split('=')[2];
+  const user = user1 || browerData ? true : false
+
+  console.log("User : ",user );
   
   return (
     <div>
-      {user || browerData ? <><Navbar /><FootMenu /></> : <Login />}  
+      {user ? <><Navbar /><FootMenu /></> : <Login />}
     </div>
   );
 }

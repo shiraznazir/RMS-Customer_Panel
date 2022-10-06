@@ -16,6 +16,7 @@ import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { logout } from "./store/reducer/userSlice";
 import { useDispatch } from "react-redux";
 import { Link, Routes, Route } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const paperStyle = {
   width: { xs: "82%", md: "80%" },
@@ -37,20 +38,22 @@ const cardStyle = {
 };
 
 function Profile() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const handleLogout = (e) => {
-    e.preventDefault();
-    dispatch(logout());
-    document.cookie = `name=; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
+    e.preventDefault()
+    navigate('/login')
+    dispatch(logout())
     document.cookie =
       "mobileNo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     document.cookie =
       "loggedIn=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
   };
 
   return (
-    <Box width="96%" sx={{ marginTop: "70px" }}>
+    <Box width="100%" sx={{ marginTop: "120px" }}>
       <Paper elevation={5} sx={parentPaper}>
         <Typography
           align="center"
@@ -60,9 +63,9 @@ function Profile() {
         >
           Profile
         </Typography>
-        <Paper alignItems="center" justifyContent="center" sx={paperStyle}>
+        <Paper alignitems="center" justifycontent="center" sx={paperStyle}>
           <Typography align="left" variant="h6" fontWeight="bold">
-            Kallu Yadav
+            UserName
           </Typography>
           <Typography align="left" sx={{ marginTop: "10px" }}>
             +91 9060798777
@@ -89,7 +92,7 @@ function Profile() {
         </Paper>
 
         <Link to="/orders" style={{ textDecoration: "none", color: "white" }}>
-          <Card sx={cardStyle}>
+          <Card justifycontent='center' sx={cardStyle}>
             <CardContent sx={{ padding: "5px" }}>
               <Grid container spacing={1}>
                 <Grid item xs={2}>

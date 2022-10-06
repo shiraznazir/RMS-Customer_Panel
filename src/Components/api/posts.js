@@ -10,8 +10,17 @@ export const insertItems = (data)=> {
 }
 
 export const insertUser = (data)=> {
-    console.log("User:- ", data)
+    console.log("Sending user data :- ", data)
     return axios.post(`http://localhost:9000/user/`,data)
+}
+
+export const getUser = (data)=> {
+    return axios.get(`http://localhost:9000/user/`)
+}
+
+export const getUserByNum = (data)=> {
+    console.log("Asdsad",data)
+    return axios.get(`http://localhost:9000/user/${data}`)
 }
 
 export const getCart = () =>{

@@ -88,7 +88,7 @@ function Frontend() {
   // console.log("Items :- ", items);
 
   return (
-    <Box sx={{ bgcolor: "#fbfbfb", width: "100%" }}>
+    <Box sx={{ bgcolor: "#fbfbfb", width: "100%", marginTop: "70px" }}>
       <Grid container spacing={0}>
         <Grid item md={4} sx={{ width: "100%" }}>
           <Paper sx={paperStyle}>
@@ -121,8 +121,8 @@ function Frontend() {
               return (
                 <Grid item xs={11.5} md={2.3} key={index + Math.random()}>
                   <Card
-                    alignItems="center"
-                    justifyContent="center"
+                    alignitems="center"
+                    justifycontent="center"
                     sx={{
                       fontSize: 8,
                       width: "100%",

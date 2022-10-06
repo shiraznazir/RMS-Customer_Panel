@@ -11,7 +11,8 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useDispatch } from "react-redux";
 import { login } from "./store/reducer/userSlice";
 import React, { useState } from "react";
-import { insertUser } from "./api/posts";
+import { insertUser, getUserByNum } from "./api/posts";
+import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom";
 import "../App.css";
 
@@ -30,30 +31,48 @@ const btnStyle = {
 };
 
 function Login() {
+
+  const navigate = useNavigate();
   const [mobileNo, setMobileNo] = useState("");
-  const [name, setName] = useState("");
+  //const [name, setName] = useState("");
   const [isVisible, setVisible] = useState(false);
+  
 
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(
-      login({
-        name: name,
-        mobileNo: mobileNo,
-        loggedIn: true,
+    e.preventDefault()
+    navigate('/')
+    getUserByNum(mobileNo)
+      .then((res) => {
+        if (res.data.status) {
+          dispatch(
+            login({
+              mobileNo: mobileNo,
+              loggedIn: true,
+            })
+          )
+        } else {
+          let newUser = { mobNo: mobileNo };
+          insertUser(newUser).then(() => {
+            dispatch(
+              login({
+                mobileNo: mobileNo,
+                loggedIn: true,
+              })
+            );
+          });
+        }
       })
-    );
-    //document.cookie = 'cookie1=test; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/'
-    document.cookie = `name=${name}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
+      .catch((err) => {
+        console.log(err);
+      });
+    // document.cookie = 'cookie1=test; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/'
+    // document.cookie = `name=${name}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
     document.cookie = `mobileNo=${mobileNo}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
     document.cookie = `loggedIn=${true}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
 
-    let newUser = { name: name, mobNo: mobileNo, loggedIn: true };
-    insertUser(newUser);
   };
-
   return (
     <Box component="form" sx={{ width: "100%", marginTop: "70px" }}>
       <Paper display="flex" elevation={10} id="login" style={paperStyle}>
@@ -63,23 +82,6 @@ function Login() {
           </Avatar>
           <h2>Log-In</h2>
         </Grid>
-        {/* Name */}
-        {/* {!isVisible && (
-          <TextField
-            label="Enter Your Name"
-            placeholder="Enter Your Name"
-            value={name}
-            onChange={(e) => {
-              if (e.target.value.length < 20 && isNaN(e.target.value)) {
-                setName(e.target.value);
-              }
-            }}
-            sx={{ marginBottom: "10px" }}
-            fullWidth
-            required
-          />
-        )} */}
-        {/* Mobile Number */}
         {!isVisible && (
           <TextField
             label="Enter Mobile Number"
@@ -121,7 +123,7 @@ function Login() {
 
         {isVisible && (
           <Button
-            onClick={(e) => handleSubmit(e)}
+            onSubmit={(e) => handleSubmit(e)}
             type="submit"
             color="primary"
             variant="contained"
@@ -131,13 +133,7 @@ function Login() {
             Submit
           </Button>
         )}
-        <Divider sx={{ fontSize: 2 }} />
       </Paper>
-      {/* <Link to="/signUp" style={{ textDecoration: "none", color: "white" }}>
-        <Button color="success" variant="contained" style={btnStyle} fullWidth>
-          Create new Acoount
-        </Button>
-      </Link> */}
     </Box>
   );
 }

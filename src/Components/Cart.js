@@ -27,7 +27,7 @@ function Cart() {
   // console.log("Cart:- ", cart);
 
   return (
-    <Box width='90%' sx={{ marginBottom: '70px' }}>
+    <Box width='90%' sx={{ marginBottom: '70px', marginTop: "70px" }}>
       {/* <Paper> */}
       <Grid
         container
