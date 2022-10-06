@@ -4,8 +4,7 @@ import {
   Avatar,
   TextField,
   Button,
-  Box,
-  Divider,
+  Box
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useDispatch } from "react-redux";
@@ -13,7 +12,6 @@ import { login } from "./store/reducer/userSlice";
 import React, { useState } from "react";
 import { insertUser, getUserByNum } from "./api/posts";
 import { useNavigate } from "react-router-dom"
-import { Link } from "react-router-dom";
 import "../App.css";
 
 const paperStyle = {
@@ -33,15 +31,14 @@ const btnStyle = {
 function Login() {
 
   const navigate = useNavigate();
-  const [mobileNo, setMobileNo] = useState("");
-  //const [name, setName] = useState("");
-  const [isVisible, setVisible] = useState(false);
+  const [mobileNo, setMobileNo] = useState("")
+  const [isVisible, setVisible] = useState(false)
   
-
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    console.log("Mob No:- ", mobileNo)
     navigate('/')
     getUserByNum(mobileNo)
       .then((res) => {
@@ -53,7 +50,7 @@ function Login() {
             })
           )
         } else {
-          let newUser = { mobNo: mobileNo };
+          let newUser = { mobNo: mobileNo }
           insertUser(newUser).then(() => {
             dispatch(
               login({
@@ -67,11 +64,8 @@ function Login() {
       .catch((err) => {
         console.log(err);
       });
-    // document.cookie = 'cookie1=test; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/'
-    // document.cookie = `name=${name}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
     document.cookie = `mobileNo=${mobileNo}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
     document.cookie = `loggedIn=${true}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
-
   };
   return (
     <Box component="form" sx={{ width: "100%", marginTop: "70px" }}>
@@ -123,7 +117,7 @@ function Login() {
 
         {isVisible && (
           <Button
-            onSubmit={(e) => handleSubmit(e)}
+            onClick={(e) => handleSubmit(e)}
             type="submit"
             color="primary"
             variant="contained"

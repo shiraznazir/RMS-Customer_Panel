@@ -4,16 +4,10 @@ import Box from "@mui/material/Box";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { Link, Routes, Route } from "react-router-dom";
-import Frontend from "./Frontend";
+import { Link } from "react-router-dom";
 import { Grid, Avatar, Button } from "@mui/material";
 import Popover from "@mui/material/Popover";
 import "../App.css";
-import RecentOrder from "./RecentOrder";
-import Cart from "./Cart";
-import Profile from "./Profile";
-import Orders from "./Orders";
-import Login from "./Login";
 import { logout } from "./store/reducer/userSlice";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -57,12 +51,12 @@ export default function Navbar() {
 
   const handleLogout = (e) => {
     e.preventDefault();
-    navigate('/login')
     dispatch(logout());
     document.cookie =
       "mobileNo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     document.cookie =
       "loggedIn=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    navigate('/login')
   };
 
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -159,14 +153,6 @@ export default function Navbar() {
         })}
       </Popover>
       
-      <Routes>
-        <Route path="/" element={<Frontend />} />
-        <Route path="/recentorder" element={<RecentOrder />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/orders" element={<Orders />} />
-      </Routes>
     </Box>
   );
 }

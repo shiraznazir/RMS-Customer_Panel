@@ -43,13 +43,16 @@ function Profile() {
 
   const handleLogout = (e) => {
     e.preventDefault()
-    navigate('/login')
     dispatch(logout())
     document.cookie =
-      "mobileNo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      "mobileNo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/login;";
     document.cookie =
-      "loggedIn=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      "loggedIn=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/login;";
+    navigate('/login')
 
+    console.log("1111111111 : Logout Cookie : ", document.cookie);
+    
+    alert("kalu")
   };
 
   return (
@@ -124,7 +127,7 @@ function Profile() {
           </Card>
         </Link>
 
-        <Link to="/login" style={{ textDecoration: "none", color: "white" }} >
+        {/* <Link to="/login" style={{ textDecoration: "none", color: "white" }} > */}
           <Card sx={cardStyle}>
             <CardContent sx={{ padding: "5px" }}>
               <Grid container spacing={1}>
@@ -154,7 +157,7 @@ function Profile() {
               </Grid>
             </CardContent>
           </Card>
-        </Link>
+        {/* </Link> */}
       </Paper>
     </Box>
   );
