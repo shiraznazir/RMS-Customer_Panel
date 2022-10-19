@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Box, Paper, Grid, Card, CardContent, CardMedia, Stack, Typography, Button } from "@mui/material";
 import { useSelector, useDispatch } from 'react-redux';
 import { setCart } from "./store/reducer/cartSlice";
-import { getCart } from './api/posts';
+// import { getCart } from './api/posts';
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 
@@ -12,24 +12,24 @@ function RecentOrder() {
 
   const dispatch = useDispatch();
 
-  const fetchCardData = () => {
-    getCart().then((val) => {
-      dispatch(setCart(val.data));
-    }).catch((err) => {
-      console.log(err.message);
-    })
-  }
+  // const fetchCardData = () => {
+  //   getCart().then((val) => {
+  //     dispatch(setCart(val.data));
+  //   }).catch((err) => {
+  //     console.log(err.message);
+  //   })
+  // }
 
-  useEffect(() => {
-    fetchCardData();
-  }, [])
+  // useEffect(() => {
+  //   fetchCardData();
+  // }, [])
 
   // console.log("Cart:- ", cart);
 
   return (
     <Box width='90%' sx={{ marginTop: '70px', marginBottom: '70px' }}>
       {/* <Paper> */}
-      <Grid
+      {/* <Grid
         container
         spacing={1}
         sx={{ marginTop: "20px", marginLeft: "13px" }}
@@ -76,7 +76,7 @@ function RecentOrder() {
             </Grid>
           );
         })}
-      </Grid>
+      </Grid> */}
       {/* </Paper> */}
     </Box >
   )

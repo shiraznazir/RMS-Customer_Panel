@@ -14,7 +14,8 @@ import AssignmentIcon from "@mui/icons-material/Assignment";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { logout } from "./store/reducer/userSlice";
-import { useDispatch } from "react-redux";
+import { selectUser } from './store/reducer/userSlice';
+import { useDispatch, useSelector } from "react-redux";
 import { Link, Routes, Route } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -38,6 +39,8 @@ const cardStyle = {
 };
 
 function Profile() {
+
+  const user = useSelector(selectUser)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
@@ -50,11 +53,8 @@ function Profile() {
       "loggedIn=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/login;";
     navigate('/login')
 
-    console.log("1111111111 : Logout Cookie : ", document.cookie);
-    
-    alert("kalu")
   };
-
+  console.log("User Profile:- ", user.mobileNo);
   return (
     <Box width="100%" sx={{ marginTop: "120px" }}>
       <Paper elevation={5} sx={parentPaper}>
@@ -71,7 +71,7 @@ function Profile() {
             UserName
           </Typography>
           <Typography align="left" sx={{ marginTop: "10px" }}>
-            +91 9060798777
+            +91 {user?.mobileNo}
           </Typography>
           <Typography align="left">kalluyadav@gmail.com</Typography>
           <Grid container spacing={1}>

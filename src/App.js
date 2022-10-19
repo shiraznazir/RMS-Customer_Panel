@@ -1,7 +1,7 @@
 import "./App.css";
-import Navbar from "./Components/Navbar";
+import React, { useEffect } from "react";
 import FootMenu from "./Components/FootMenu";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { selectUser } from "./Components/store/reducer/userSlice";
 import Login from "./Components/Login";
 import RecentOrder from "./Components/RecentOrder";
@@ -10,34 +10,39 @@ import Profile from "./Components/Profile";
 import Orders from "./Components/Orders";
 import Frontend from './Components/Frontend'
 import { Routes, Route } from "react-router-dom";
+import { login } from './Components/store/reducer/userSlice'
 
 function App() {
-  const user1 = useSelector(selectUser);
-  const browerData = document.cookie.split("=")[2];
 
-  const user = user1 || browerData ? true : false;
+  const dispatch = useDispatch();
+  const user = useSelector(selectUser);
 
-  console.log("User : ", user1);
-  console.log("Cookie : ", document.cookie);
+  useEffect(() => {
+    var user = JSON.parse(localStorage.getItem('user'));
+    // const browerData = document.cookie
+    dispatch(
+      login(user)
+    )
+  }, []);
 
   return (
     <div>
       {user ? (
         <>
-          <Navbar />
           <FootMenu />
+          <Routes>
+        <Route exact path="/" element={<Frontend />} />
+        <Route exact path="/recentorder" element={<RecentOrder />} />
+        <Route exact path="/login" element={<Login />} />
+        <Route exact path="/cart" element={<Cart />} />
+        <Route exact path="/profile" element={<Profile />} />
+        <Route exact path="/orders" element={<Orders />} />
+      </Routes>
         </>
       ) : (
         <Login />
       )}
-      <Routes>
-        <Route path="/" element={<Frontend />} />
-        <Route path="/recentorder" element={<RecentOrder />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/orders" element={<Orders />} />
-      </Routes>
+      
     </div>
   );
 }

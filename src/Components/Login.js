@@ -31,42 +31,41 @@ const btnStyle = {
 function Login() {
 
   const navigate = useNavigate();
-  const [mobileNo, setMobileNo] = useState("")
+  const [mobileNo, setMobileNo] = useState()
+  const [userId, setUserId] = useState("")
   const [isVisible, setVisible] = useState(false)
   
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    console.log("Mob No:- ", mobileNo)
     navigate('/')
     getUserByNum(mobileNo)
       .then((res) => {
+
         if (res.data.status) {
-          dispatch(
-            login({
-              mobileNo: mobileNo,
-              loggedIn: true,
-            })
-          )
+          let user = res.data.user[0]
+          user.loggedIn = true
+          dispatch( login(user))
+          localStorage.setItem('user', JSON.stringify(user));
         } else {
           let newUser = { mobNo: mobileNo }
-          insertUser(newUser).then(() => {
-            dispatch(
-              login({
-                mobileNo: mobileNo,
-                loggedIn: true,
-              })
+          insertUser(newUser).then((res) => {
+            let id = res.data.userData
+            dispatch(login({...res.data.userData, loggedIn: true})
             );
+            localStorage.setItem('user', JSON.stringify({...res.data.userData, loggedIn: true}))
           });
         }
       })
       .catch((err) => {
         console.log(err);
-      });
-    document.cookie = `mobileNo=${mobileNo}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
-    document.cookie = `loggedIn=${true}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
+      })
+    // document.cookie = `userId=${userId}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
+    // document.cookie = `mobileNo=${mobileNo}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
+    // document.cookie = `loggedIn=${true}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
   };
+  console.log(">>>>>>>>>>>>", userId );
   return (
     <Box component="form" sx={{ width: "100%", marginTop: "70px" }}>
       <Paper display="flex" elevation={10} id="login" style={paperStyle}>
