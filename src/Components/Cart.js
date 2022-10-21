@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Paper,
@@ -12,45 +12,37 @@ import {
 } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { setCart } from "./store/reducer/cartSlice";
-import { getOrder, editOrder, deleteOrder } from "./api/posts";
+import { getOrder, editOrder, deleteOrder, getOrderByUserId } from "./api/posts";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { useNavigate } from "react-router";
+import { selectUser } from "./store/reducer/userSlice";
 
 function Cart() {
 
   const navigate = useNavigate();
-  const cart = useSelector((state) => state.cart.cart);
+  const user = useSelector(selectUser);
   const dispatch = useDispatch();
-
-  const fetchCardData = () => {
-    getOrder()
-      .then((val) => {
-        dispatch(setCart(val.data));
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  };
-
-  useEffect(() => {
-    fetchCardData();
-  }, []);
+  const [cart, setCart] = useState([]);
 
   const decreaseQty = (e, element) => {
     e.preventDefault();
     if(element.productQty == 1){
-      deleteOrder(element._id);
+      deleteOrder(element._id).then((res)=>{
+        if(res.data.status){
+          fetchOrderByUserId()
+        }
+      })
       navigate('/cart')
     }
     if (element.productQty > 1) {
       let updateQty = { ...element, productQty: element.productQty - 1 };
       editOrder(element._id, updateQty).then((res) => {
         console.log("Res", res);
-        fetchCardData();
+        fetchOrderByUserId()
       });
     }
   };
@@ -60,12 +52,22 @@ function Cart() {
     let updateQty = { ...element, productQty: element.productQty + 1 };
     editOrder(element._id, updateQty).then((res) => {
       console.log("Res", res);
-      fetchCardData();
+      fetchOrderByUserId()
     });
   };
 
-  console.log("Cart:- ", cart[0]);
+  const fetchOrderByUserId = () =>{
+    getOrderByUserId(user._id).then((element)=>{
+      setCart(element.data)
+    }).catch((err)=>{
+      console.log("Error ", err);
+    })
+  }
 
+  useEffect(()=>{
+    fetchOrderByUserId()
+  },[])
+  // console.log("Cart", cart);
   return (
     <Box width="90%" sx={{ marginBottom: "70px" }}>
       {/* <Paper> */}
@@ -93,7 +95,7 @@ function Cart() {
                     <CurrencyRupeeIcon sx={{ fontSize: "1rem" }} />
                     <Typography sx={{ marginTop: "-3px" }}>
                       {element.productId.price
-                        ? element.productId.name
+                        ? element.productId.price
                         : element.productId.quaterPrice}
                     </Typography>
                   </Stack>
@@ -147,7 +149,7 @@ function Cart() {
                       <Grid align="center" item xs={4}>
                         <Typography sx={{ marginTop: "-3px" }}>
                           {element.productId.price
-                            ? element.productId.name
+                            ? element.productId.price
                             : element.productId.quaterPrice}
                         </Typography>
                       </Grid>

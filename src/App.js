@@ -9,6 +9,7 @@ import Cart from "./Components/Cart";
 import Profile from "./Components/Profile";
 import Orders from "./Components/Orders";
 import Frontend from './Components/Frontend'
+import UserEditForm from './Components/UserEditForm'
 import { Routes, Route } from "react-router-dom";
 import { login } from './Components/store/reducer/userSlice'
 
@@ -37,6 +38,7 @@ function App() {
         <Route exact path="/cart" element={<Cart />} />
         <Route exact path="/profile" element={<Profile />} />
         <Route exact path="/orders" element={<Orders />} />
+        <Route exact path="/profileEdit" element={<UserEditForm />} />
       </Routes>
         </>
       ) : (

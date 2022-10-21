@@ -54,7 +54,12 @@ function Profile() {
     navigate('/login')
 
   };
-  console.log("User Profile:- ", user.mobileNo);
+
+  const handleEdit = () =>{
+    navigate('/profileEdit')
+  }
+
+  console.log("User Profile:- ", user.mobNo);
   return (
     <Box width="100%" sx={{ marginTop: "120px" }}>
       <Paper elevation={5} sx={parentPaper}>
@@ -68,15 +73,15 @@ function Profile() {
         </Typography>
         <Paper alignitems="center" justifycontent="center" sx={paperStyle}>
           <Typography align="left" variant="h6" fontWeight="bold">
-            UserName
+            Kallu Yadav
           </Typography>
           <Typography align="left" sx={{ marginTop: "10px" }}>
-            +91 {user?.mobileNo}
+            +91 {user?.mobNo}
           </Typography>
           <Typography align="left">kalluyadav@gmail.com</Typography>
           <Grid container spacing={1}>
             <Grid item xs={6}>
-              <Typography sx={{ color: "#FF0000", marginTop: "10px" }}>
+              <Typography onClick={handleEdit} sx={{ color: "#FF0000", marginTop: "10px" }}>
                 edit profile
               </Typography>
             </Grid>

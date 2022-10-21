@@ -13,20 +13,25 @@ import StopCircleOutlinedIcon from "@mui/icons-material/StopCircleOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import React, { useEffect, useState } from "react";
-import { getItems } from "./api/posts";
-import { insertItems } from "./api/posts";
 import { getCategories } from "./api/posts";
-import { getCart } from "./api/posts";
 import { useSelector, useDispatch } from "react-redux";
-import { setItems } from "./store/reducer/itemsSlice";
+import { setMenuItems } from "./store/reducer/menuItemsSlice";
 import { setCart } from "./store/reducer/cartSlice";
-import { getOrder, editOrder } from "./api/posts";
+import {
+  getOrder,
+  editOrder,
+  getMenuItem,
+  getOrderByUserId,
+  deleteOrder,
+} from "./api/posts";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import { insertOrder } from "./api/posts";
 import { selectUser } from "./store/reducer/userSlice";
 import "../App.css";
 import { useNavigate } from "react-router";
 import RemoveIcon from "@mui/icons-material/Remove";
+import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import { padding } from "@mui/system";
 
 const paperStyle = {
   padding: 5,
@@ -38,34 +43,34 @@ const paperStyle = {
 const btnStyle = { bgcolor: "#FFA500", borderRadius: "20px" };
 
 function Frontend() {
+  let productIdData = [];
+
   const navigate = useNavigate();
-  const cart = useSelector((state) => state.cart.cart);
-  const items = useSelector((state) => state.items.items);
+  //const cart = useSelector((state) => state.cart.cart);
+  const menuItems = useSelector((state) => state.menuItems.menuItems);
   const user = useSelector(selectUser);
   const [categories, setCategories] = useState([]);
-  const [currOrder, setCurrOrder] = useState("");
-  const [visible, setVisible] = useState(false);
+  const [cart, setCart] = useState([]);
 
   const dispatch = useDispatch();
 
   const fetchData = () => {
-    getItems(user._id)
+    getMenuItem()
       .then((val) => {
         //console.log(val.data);
-        dispatch(setItems(val.data));
+        dispatch(setMenuItems(val.data));
       })
       .catch((err) => {
         console.log(err.message);
       });
   };
 
-  useEffect(()=>{
-    getOrder().then((element)=>{
-      console.log("Element", element.data);
-    })
-  })
+  // useEffect(()=>{
+  //   getOrder().then((element)=>{
+  //     console.log("Element", element.data);
+  //   })
+  // })
   const addToCart = (element) => {
-    setVisible(true);
     let data = {
       userId: user._id,
       productId: element._id,
@@ -77,8 +82,7 @@ function Frontend() {
       .then((res) => {
         // fetchCardData();
         if (res.data.status) {
-          setCurrOrder(res.data.item._id)
-         // console.log("Inserted >>>>>>", res.data.item._id);
+          fetchOrderByUserId();
         }
       })
       .catch((err) => {
@@ -88,23 +92,37 @@ function Frontend() {
 
   const decreaseQty = (e, element) => {
     e.preventDefault();
+    if (element.productQty == 1) {
+      deleteOrder(element._id).then((res) => {
+        if (res.data.status) {
+          fetchOrderByUserId();
+        }
+      });
+    }
     if (element.productQty > 1) {
       let updateQty = { ...element, productQty: element.productQty - 1 };
       editOrder(element._id, updateQty).then((res) => {
         console.log("Res", res);
+        fetchOrderByUserId();
       });
     }
   };
 
   const increaseQty = (e, element) => {
     e.preventDefault();
+    // console.log("increaseQty: ", element);
     let updateQty = { ...element, productQty: element.productQty + 1 };
     editOrder(element._id, updateQty).then((res) => {
       console.log("Res", res);
+      fetchOrderByUserId();
     });
   };
 
-  useEffect(() => {
+  const handleNext = () => {
+    navigate("/cart");
+  };
+
+  const fetchCategories = () => {
     getCategories()
       .then((val) => {
         //console.log("Categories Items :- ", val.data);
@@ -113,15 +131,28 @@ function Frontend() {
       .catch((err) => {
         console.log(err.message);
       });
-  }, []);
+  };
+
+  const fetchOrderByUserId = () => {
+    getOrderByUserId(user._id)
+      .then((element) => {
+        setCart(element.data);
+      })
+      .catch((err) => {
+        console.log("Error ", err);
+      });
+  };
 
   useEffect(() => {
     fetchData();
-    // fetchCardData();
+    fetchCategories();
+    fetchOrderByUserId();
   }, []);
-  console.log("currOrder>>>>>add>>", currOrder);
+
+  console.log("Cart In frntent>>>>>>>", cart);
+
   return (
-    <Box sx={{ bgcolor: "#fbfbfb", width: "100%" }}>
+    <Box sx={{ bgcolor: "#fbfbfb", width: "100%", position: "absolute" }}>
       <Grid container spacing={0}>
         {/* <Grid item md={4} sx={{ width: "100%" }}>
           <Paper sx={paperStyle}>
@@ -205,8 +236,12 @@ function Frontend() {
             justifyContent="center"
             sx={{ width: "100%", margin: "5px", marginBottom: "70px" }}
           >
-            {items?.length &&
-              items?.map((element, index) => {
+            {menuItems?.length &&
+              menuItems?.map((element, index) => {
+                let inCart = cart.filter((cartItem) => {
+                  return cartItem.productId._id === element._id;
+                });
+                console.log("ddd>>>>", inCart[0]);
                 return (
                   <Grid item xs={12} md={4} key={index + Math.random()}>
                     <Card
@@ -262,66 +297,174 @@ function Frontend() {
                           </Grid>
                           <Grid item xs={6}>
                             {/* Add to Cart Button */}
-                            {!currOrder && <Box
-                            onClick={()=> addToCart(element)}
-                              sx={{
-                                border: 1,
-                                bgcolor: "background.paper",
-                                m: 1,
-                                borderColor: "#FF0000",
-                                borderRadius: "1rem",
-                                width: "8rem",
-                                height: "2rem",
-                              }}
-                            >
-                              <Grid container spacing={1}>
-                                <Grid item xs={8}>
-                                  <Typography
-                                    align="right"
-                                    fontWeight="bold"
-                                    sx={{ marginTop: "5px", color: "#FF0000" }}
+                            {inCart.length > 0 ? (
+                              <>
+                                <Box
+                                  sx={{
+                                    border: 1,
+                                    bgcolor: "background.paper",
+                                    m: 1,
+                                    borderColor: "#FF0000",
+                                    borderRadius: "1rem",
+                                    width: "8rem",
+                                    height: "2rem",
+                                  }}
+                                >
+                                  <Grid container spacing={1}>
+                                    <Grid
+                                      item
+                                      xs={4}
+                                      sx={{
+                                        marginTop: "4px",
+                                        marginLeft: "4px",
+                                      }}
+                                    >
+                                      <RemoveIcon
+                                        onClick={(e) =>
+                                          decreaseQty(e, inCart[0])
+                                        }
+                                        sx={{ color: "#FF0000" }}
+                                      />
+                                    </Grid>
+                                    <Grid
+                                      align="center"
+                                      item
+                                      xs={3}
+                                      sx={{ marginTop: "4px" }}
+                                    >
+                                      <Typography fontWeight="bold">
+                                        {inCart[0].productQty}
+                                      </Typography>
+                                    </Grid>
+                                    <Grid
+                                      align="right"
+                                      item
+                                      xs={4}
+                                      sx={{ marginTop: "4px" }}
+                                    >
+                                      <AddIcon
+                                        onClick={(e) =>
+                                          increaseQty(e, inCart[0])
+                                        }
+                                        sx={{ color: "#FF0000" }}
+                                      />
+                                    </Grid>
+                                  </Grid>
+                                </Box>
+                                <Grid>
+                                  <Box
+                                    justify="center"
+                                    sx={{
+                                      position: "fixed",
+                                      bottom: "55px",
+                                      right: "10px",
+                                      left: "10px",
+                                      width: "88%",
+                                      bgcolor: "#FF0000",
+                                      borderRadius: "5px",
+                                      padding: 1,
+                                    }}
                                   >
-                                    ADD
-                                  </Typography>
+                                    <Grid container spacing={2}>
+                                      <Grid item xs={6}>
+                                        <Typography
+                                          sx={{
+                                            marginLeft: "1px",
+                                            color: "#ffffff",
+                                            fontSize: "13px",
+                                          }}
+                                        >
+                                          3 ITEMS
+                                        </Typography>
+
+                                        <Grid container spacing={0}>
+                                          <Grid item xs={1.5}>
+                                            <CurrencyRupeeIcon
+                                              sx={{
+                                                color: "#ffffff",
+                                                fontSize: "1rem",
+                                              }}
+                                            />
+                                          </Grid>
+                                          <Grid item xs={8}>
+                                            <Typography
+                                              sx={{
+                                                color: "#ffffff",
+                                                fontSize: "13px",
+                                              }}
+                                            >
+                                              496 plus taxes
+                                            </Typography>
+                                          </Grid>
+                                        </Grid>
+                                      </Grid>
+                                      <Grid align="right" item xs={5}>
+                                        <Grid
+                                          onClick={handleNext}
+                                          container
+                                          spacing={0}
+                                        >
+                                          <Grid align="right" item xs={11.5}>
+                                            <Typography
+                                              sx={{
+                                                color: "#ffffff",
+                                                marginTop: "8px",
+                                              }}
+                                            >
+                                              Next
+                                            </Typography>
+                                          </Grid>
+                                          <Grid align="right" item xs={0.5}>
+                                            <ArrowRightIcon
+                                              fontSize="medium"
+                                              sx={{
+                                                color: "#ffffff",
+                                                marginTop: "8px",
+                                              }}
+                                            />
+                                          </Grid>
+                                        </Grid>
+                                      </Grid>
+                                    </Grid>
+                                  </Box>
                                 </Grid>
-                                <Grid item xs={4}>
-                                  <AddIcon align="right" fontSize="small" sx={{color: "#FF0000" }} />
+                              </>
+                            ) : (
+                              <Box
+                                onClick={() => addToCart(element)}
+                                sx={{
+                                  border: 1,
+                                  bgcolor: "background.paper",
+                                  m: 1,
+                                  borderColor: "#FF0000",
+                                  borderRadius: "1rem",
+                                  width: "8rem",
+                                  height: "2rem",
+                                }}
+                              >
+                                <Grid container spacing={1}>
+                                  <Grid item xs={8}>
+                                    <Typography
+                                      align="right"
+                                      fontWeight="bold"
+                                      sx={{
+                                        marginTop: "5px",
+                                        color: "#FF0000",
+                                      }}
+                                    >
+                                      ADD
+                                    </Typography>
+                                  </Grid>
+                                  <Grid item xs={4}>
+                                    <AddIcon
+                                      align="right"
+                                      fontSize="small"
+                                      sx={{ color: "#FF0000" }}
+                                    />
+                                  </Grid>
                                 </Grid>
-                              </Grid>
-                            </Box>}
-                            {/* Quantity */}
-                            { currOrder && <Box
-                              sx={{
-                                border: 1,
-                                bgcolor: "background.paper",
-                                m: 1,
-                                borderColor: "#FF0000",
-                                borderRadius: "1rem",
-                                width: "8rem",
-                                height: "2rem",
-                              }}
-                            >
-                              <Grid container spacing={1}>
-                                <Grid
-                                  item
-                                  xs={4}
-                                  sx={{ marginTop: "4px", marginLeft: "4px" }}
-                                >
-                                  <RemoveIcon onClick={(e)=>decreaseQty(e)} sx={{ color: "#FF0000" }} />
-                                </Grid>
-                                <Grid
-                                  align="center"
-                                  item
-                                  xs={3}
-                                  sx={{ marginTop: "4px" }}
-                                >
-                                  <Typography>12</Typography>
-                                </Grid>
-                                <Grid align='right' item xs={4} sx={{ marginTop: "4px" }}>
-                                  <AddIcon sx={{ color: "#FF0000" }} />
-                                </Grid>
-                              </Grid>
-                            </Box>}
+                              </Box>
+                            )}
                             {element.portion && (
                               <Typography align="center">
                                 Customisable

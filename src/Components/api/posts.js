@@ -1,12 +1,7 @@
 import axios from 'axios';
 
-export const getItems = ()=> {
+export const getMenuItem = ()=> {
     return axios.get(`http://localhost:9000/menu`)
-}
-
-export const insertItems = (data)=> {
-    //console.log("Data:- ", data)
-    return axios.post(`http://localhost:9000/cartItem/`,data)
 }
 
 export const insertUser = (data)=> {
@@ -38,6 +33,10 @@ export const editOrder = (id, data) =>{
 
 export const getOrderByID = (id) =>{
     return axios.get(`http://localhost:9000/order/${id}`)
+}
+
+export const getOrderByUserId = (userId)=> {
+    return axios.get(`http://localhost:9000/order/${userId}`)
 }
 
 export const deleteOrder = (id) =>{
