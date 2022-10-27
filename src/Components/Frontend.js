@@ -8,15 +8,19 @@ import {
   Card,
   CardContent,
   CardMedia,
+  Divider,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
 } from "@mui/material";
 import StopCircleOutlinedIcon from "@mui/icons-material/StopCircleOutlined";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
+import Dialog from "@mui/material/Dialog";
 import React, { useEffect, useState } from "react";
 import { getCategories } from "./api/posts";
 import { useSelector, useDispatch } from "react-redux";
 import { setMenuItems } from "./store/reducer/menuItemsSlice";
-import { setCart } from "./store/reducer/cartSlice";
 import {
   getOrder,
   editOrder,
@@ -31,6 +35,11 @@ import "../App.css";
 import { useNavigate } from "react-router";
 import RemoveIcon from "@mui/icons-material/Remove";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
+import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import ShareIcon from "@mui/icons-material/Share";
+import CancelIcon from '@mui/icons-material/Cancel';
+import Popover from "@mui/material/Popover";
 import { padding } from "@mui/system";
 
 const paperStyle = {
@@ -43,16 +52,31 @@ const paperStyle = {
 const btnStyle = { bgcolor: "#FFA500", borderRadius: "20px" };
 
 function Frontend() {
-  let productIdData = [];
 
   const navigate = useNavigate();
   //const cart = useSelector((state) => state.cart.cart);
   const menuItems = useSelector((state) => state.menuItems.menuItems);
   const user = useSelector(selectUser);
-  const [categories, setCategories] = useState([]);
-  const [cart, setCart] = useState([]);
-
   const dispatch = useDispatch();
+
+  const [categories, setCategories] = useState([]);
+  const [cart, setCart] = useState({ data: [], totalPrice: 0, totalItems: 0 });
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  console.log("Frontent>>>>>>>>>>>>>>>>>", cart);
+
+  const portionPopover = (element) => {
+    fetchOrderByUserId()
+    console.log("Check >>>>>>>>>>>>", cart);
+    setAnchorEl( element );
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
 
   const fetchData = () => {
     getMenuItem()
@@ -70,19 +94,23 @@ function Frontend() {
   //     console.log("Element", element.data);
   //   })
   // })
+
   const addToCart = (element) => {
     let data = {
       userId: user._id,
       productId: element._id,
       productQty: 1,
+      totalProductPrice: element.price ? element.price : element.quaterPrice,
       status: 1,
       timeStamp: 1,
     };
+
     insertOrder(data)
       .then((res) => {
         // fetchCardData();
         if (res.data.status) {
           fetchOrderByUserId();
+          portionPopover(element);
         }
       })
       .catch((err) => {
@@ -100,7 +128,15 @@ function Frontend() {
       });
     }
     if (element.productQty > 1) {
-      let updateQty = { ...element, productQty: element.productQty - 1 };
+      let price =
+        element.productId.price > 0
+          ? element.productId.price
+          : element.productId.quaterPrice;
+      let updateQty = {
+        ...element,
+        productQty: element.productQty - 1,
+        totalProductPrice: element.totalProductPrice - price,
+      };
       editOrder(element._id, updateQty).then((res) => {
         console.log("Res", res);
         fetchOrderByUserId();
@@ -109,11 +145,20 @@ function Frontend() {
   };
 
   const increaseQty = (e, element) => {
+    // console.log("Check>>>>>>>>>>>>", element);
     e.preventDefault();
-    // console.log("increaseQty: ", element);
-    let updateQty = { ...element, productQty: element.productQty + 1 };
+    let price =
+      element.productId.price > 0
+        ? element.productId.price
+        : element.productId.quaterPrice;
+    let updateQty = {
+      ...element,
+      productQty: element.productQty + 1,
+      totalProductPrice: element.totalProductPrice + price,
+    };
+
     editOrder(element._id, updateQty).then((res) => {
-      console.log("Res", res);
+      // console.log("Res", res);
       fetchOrderByUserId();
     });
   };
@@ -134,13 +179,25 @@ function Frontend() {
   };
 
   const fetchOrderByUserId = () => {
+    // console.log("Ck>>>>>>>>", user._id);
     getOrderByUserId(user._id)
       .then((element) => {
-        setCart(element.data);
+        let totalAmount = 0;
+        let totalItems = 0;
+        element.data.map((ele) => {
+          totalItems += ele.productQty;
+          totalAmount += ele.totalProductPrice;
+        });
+        setCart({
+          data: element.data,
+          totalPrice: totalAmount,
+          totalItems: totalItems,
+        });
       })
       .catch((err) => {
         console.log("Error ", err);
       });
+      console.log("po>>>>>>>", cart);
   };
 
   useEffect(() => {
@@ -148,8 +205,6 @@ function Frontend() {
     fetchCategories();
     fetchOrderByUserId();
   }, []);
-
-  console.log("Cart In frntent>>>>>>>", cart);
 
   return (
     <Box sx={{ bgcolor: "#fbfbfb", width: "100%", position: "absolute" }}>
@@ -238,10 +293,10 @@ function Frontend() {
           >
             {menuItems?.length &&
               menuItems?.map((element, index) => {
-                let inCart = cart.filter((cartItem) => {
+                let inCart = cart.data.filter((cartItem) => {
                   return cartItem.productId._id === element._id;
                 });
-                console.log("ddd>>>>", inCart[0]);
+                //console.log("ddd>>>>", inCart[0]);
                 return (
                   <Grid item xs={12} md={4} key={index + Math.random()}>
                     <Card
@@ -351,87 +406,13 @@ function Frontend() {
                                     </Grid>
                                   </Grid>
                                 </Box>
-                                <Grid>
-                                  <Box
-                                    justify="center"
-                                    sx={{
-                                      position: "fixed",
-                                      bottom: "55px",
-                                      right: "10px",
-                                      left: "10px",
-                                      width: "88%",
-                                      bgcolor: "#FF0000",
-                                      borderRadius: "5px",
-                                      padding: 1,
-                                    }}
-                                  >
-                                    <Grid container spacing={2}>
-                                      <Grid item xs={6}>
-                                        <Typography
-                                          sx={{
-                                            marginLeft: "1px",
-                                            color: "#ffffff",
-                                            fontSize: "13px",
-                                          }}
-                                        >
-                                          3 ITEMS
-                                        </Typography>
-
-                                        <Grid container spacing={0}>
-                                          <Grid item xs={1.5}>
-                                            <CurrencyRupeeIcon
-                                              sx={{
-                                                color: "#ffffff",
-                                                fontSize: "1rem",
-                                              }}
-                                            />
-                                          </Grid>
-                                          <Grid item xs={8}>
-                                            <Typography
-                                              sx={{
-                                                color: "#ffffff",
-                                                fontSize: "13px",
-                                              }}
-                                            >
-                                              496 plus taxes
-                                            </Typography>
-                                          </Grid>
-                                        </Grid>
-                                      </Grid>
-                                      <Grid align="right" item xs={5}>
-                                        <Grid
-                                          onClick={handleNext}
-                                          container
-                                          spacing={0}
-                                        >
-                                          <Grid align="right" item xs={11.5}>
-                                            <Typography
-                                              sx={{
-                                                color: "#ffffff",
-                                                marginTop: "8px",
-                                              }}
-                                            >
-                                              Next
-                                            </Typography>
-                                          </Grid>
-                                          <Grid align="right" item xs={0.5}>
-                                            <ArrowRightIcon
-                                              fontSize="medium"
-                                              sx={{
-                                                color: "#ffffff",
-                                                marginTop: "8px",
-                                              }}
-                                            />
-                                          </Grid>
-                                        </Grid>
-                                      </Grid>
-                                    </Grid>
-                                  </Box>
-                                </Grid>
                               </>
                             ) : (
                               <Box
-                                onClick={() => addToCart(element)}
+                                aria-describedby={id}
+                                onClick={() => {
+                                  addToCart(element);
+                                }}
                                 sx={{
                                   border: 1,
                                   bgcolor: "background.paper",
@@ -479,6 +460,301 @@ function Frontend() {
               })}
           </Grid>
         </Grid>
+      </Grid>
+      {/* Summary List */}
+      <Grid>
+        {cart.data.length > 0 && (
+          <Box
+            justify="center"
+            sx={{
+              position: "fixed",
+              bottom: "55px",
+              right: "10px",
+              left: "10px",
+              width: "88%",
+              bgcolor: "#FF0000",
+              borderRadius: "5px",
+              padding: 1,
+            }}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={6}>
+                <Typography
+                  sx={{
+                    marginLeft: "1px",
+                    color: "#ffffff",
+                    fontSize: "13px",
+                  }}
+                >
+                  {cart.totalItems} ITEMS
+                </Typography>
+
+                <Grid container spacing={0}>
+                  <Grid item xs={1.5}>
+                    <CurrencyRupeeIcon
+                      sx={{
+                        color: "#ffffff",
+                        fontSize: "1rem",
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={8}>
+                    <Typography
+                      sx={{
+                        color: "#ffffff",
+                        fontSize: "13px",
+                      }}
+                    >
+                      {cart.totalPrice} plus taxes
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid align="right" item xs={5}>
+                <Grid onClick={handleNext} container spacing={0}>
+                  <Grid align="right" item xs={11.5}>
+                    <Typography
+                      sx={{
+                        color: "#ffffff",
+                        marginTop: "8px",
+                      }}
+                    >
+                      Next
+                    </Typography>
+                  </Grid>
+                  <Grid align="right" item xs={0.5}>
+                    <ArrowRightIcon
+                      fontSize="medium"
+                      sx={{
+                        color: "#ffffff",
+                        marginTop: "8px",
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </Box>
+        )}
+      </Grid>
+      <Grid>
+        {/* <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+          sx={{ width: "100%", left: "-16px", top: "30%" }}
+          fullWidth
+        >
+          <CardMedia
+            sx={{ m: 2, width: "90%" }}
+            component="img"
+            alt={anchorEl?.menuImage}
+            height="200"
+            image={`http://localhost:9000/images/${anchorEl?.menuImage}`}
+          />
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Typography fontWeight="bold" sx={{ p: 2 }}>
+                {anchorEl?.name}
+              </Typography>
+            </Grid>
+            <Grid item xs={6}>
+              
+            </Grid>
+          </Grid>
+        </Popover> */}
+        {/* {let cart.data.filter((cartItem)=>{
+            if(cartItem.productId._id === anchorEl?._id){
+               return cartItem;
+            }
+          })}
+          {console.log("ygtyfytf", cart.data)} */}
+        <CancelIcon fontSize="large" />
+        <Dialog
+          fullWidth
+          sx={{
+            width: "116%",
+            margin: "-32px",
+            borderRadius: "30px",
+            top: "11%",
+          }}
+          open={open}
+          onClose={handleClose}
+        >
+          <CancelIcon align='center' />
+          <CardMedia
+            sx={{ p: 2, width: "90%", borderRadius: "25px" }}
+            component="img"
+            alt={anchorEl?.menuImage}
+            height="200"
+            image={`http://localhost:9000/images/${anchorEl?.menuImage}`}
+          />
+          <RadioButtonCheckedIcon
+            sx={{
+              ml: 2,
+              color: anchorEl?.isVeg === "Veg" ? "#009900" : "#FF0000",
+            }}
+          />
+          <Grid container spacing={2}>
+            <Grid item xs={8}>
+              <Typography fontWeight="bold" sx={{ p: 2 }}>
+                {anchorEl?.name}
+              </Typography>
+            </Grid>
+            <Grid align="right" item xs={2}>
+              <FavoriteBorderIcon />
+            </Grid>
+            <Grid align="left" item xs={2}>
+              <ShareIcon />
+            </Grid>
+          </Grid>
+          <Divider />
+          <Grid container spacing={2}>
+            <Grid sx={{ m: 2 }} item xs={6}>
+              <Typography fontWeight="bold">Quantity</Typography>
+              <Typography sx={{ fontSize: "12px" }}>
+                Select 1 out of 3 options
+              </Typography>
+            </Grid>
+            <Grid align="right" sx={{ mt: 3 }} item xs={4}>
+              <Box
+                sx={{
+                  p: 0.3,
+                  width: "50%",
+                  height: "14px",
+                  borderRadius: "5px",
+                  border: "1px solid red",
+                }}
+              >
+                <Typography sx={{ fontSize: "10px", color: "#FF0000" }}>
+                  REQUIRED
+                </Typography>
+              </Box>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={8}>
+              <Typography sx={{ fontSize: "15px", pl: 2, pb: 3 }}>
+                Full
+              </Typography>
+            </Grid>
+            <Grid align="right" item xs={4}>
+              <Stack direction="row" spacing={0}>
+                <CurrencyRupeeIcon sx={{ fontSize: "15px", mt: "3px" }} />
+                <Typography sx={{ fontSize: "15px" }}>100</Typography>
+                <FormControlLabel
+                  control={<Radio />}
+                  sx={{ fontSize: "15px", mt: -1.2, ml: "1px" }}
+                />
+              </Stack>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={8}>
+              <Typography sx={{ fontSize: "15px", pl: 2, pb: 3 }}>
+                Half
+              </Typography>
+            </Grid>
+            <Grid align="right" item xs={4}>
+              <Stack direction="row" spacing={0}>
+                <CurrencyRupeeIcon sx={{ fontSize: "15px", mt: "3px" }} />
+                <Typography sx={{ fontSize: "15px" }}>200</Typography>
+                <FormControlLabel
+                  control={<Radio />}
+                  sx={{ fontSize: "15px", mt: -1.2, ml: "1px" }}
+                />
+              </Stack>
+            </Grid>
+          </Grid>
+          <Grid container spacing={2}>
+            <Grid item xs={8}>
+              <Typography sx={{ fontSize: "15px", pl: 2, pb: 3 }}>
+                Quater
+              </Typography>
+            </Grid>
+            <Grid align="right" item xs={4}>
+              <Stack direction="row" spacing={0}>
+                <CurrencyRupeeIcon sx={{ fontSize: "15px", mt: "3px" }} />
+                <Typography sx={{ fontSize: "15px" }}>300</Typography>
+                <FormControlLabel
+                  control={<Radio />}
+                  sx={{ fontSize: "15px", mt: -1.2, ml: "1px" }}
+                />
+              </Stack>
+            </Grid>
+          </Grid>
+          <Divider sx={{ fontWeight: "bold" }} />
+          
+          <Grid container spacing={1}>
+            <Grid item xs={4}>
+              <Box
+                sx={{
+                  border: 1,
+                  bgcolor: "background.paper",
+                  m: 1,
+                  borderColor: "#FF0000",
+                  borderRadius: "10px",
+                  width: "6rem",
+                  height: "2rem",
+                }}
+              >
+                <Grid container spacing={1}>
+                  <Grid
+                    item
+                    xs={4}
+                    sx={{
+                      marginTop: "4px",
+                      marginLeft: "4px",
+                    }}
+                  >
+                    <RemoveIcon sx={{ color: "#FF0000" }} />
+                  </Grid>
+                  <Grid align="center" item xs={3} sx={{ marginTop: "4px" }}>
+                    <Typography fontWeight="bold">
+                      {/* {avaInCart[0].productQty} */}
+                    </Typography>
+                  </Grid>
+                  <Grid align="right" item xs={4} sx={{ marginTop: "4px" }}>
+                    <AddIcon
+                      // onClick={(e) => increaseQty(e, anchorEl?.data)}
+                      sx={{ color: "#FF0000" }}
+                    />
+                  </Grid>
+                </Grid>
+              </Box>
+            </Grid>
+            <Grid item xs={8}>
+              <Button
+                variant="contained"
+                sx={{ width: "90%", height: "2rem", m: 1, bgcolor: "#FF0000" }}
+              >
+                <Typography>Add Item</Typography>
+                <CurrencyRupeeIcon fontSize="25px" />
+                {/* <Typography>{avaInCart[0].totalProductPrice}</Typography> */}
+              </Button>
+            </Grid>
+          </Grid>
+        </Dialog>
+        {/* <Box
+          justify="center"
+          sx={{
+            position: "fixed",
+            bottom: "55px",
+            right: "1px",
+            left: "1px",
+            width: "100%",
+            bgcolor: "#ffffff",
+            borderRadius: "5px",
+            padding: 1,
+          }}
+        >
+          jkjnjdnnj
+        </Box> */}
       </Grid>
     </Box>
   );

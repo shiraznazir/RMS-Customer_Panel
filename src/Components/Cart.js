@@ -12,7 +12,12 @@ import {
 } from "@mui/material";
 import { useSelector, useDispatch } from "react-redux";
 import { setCart } from "./store/reducer/cartSlice";
-import { getOrder, editOrder, deleteOrder, getOrderByUserId } from "./api/posts";
+import {
+  getOrder,
+  editOrder,
+  deleteOrder,
+  getOrderByUserId,
+} from "./api/posts";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
@@ -22,52 +27,73 @@ import { useNavigate } from "react-router";
 import { selectUser } from "./store/reducer/userSlice";
 
 function Cart() {
-
   const navigate = useNavigate();
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState({ data: [], totalPrice: 0 });
 
   const decreaseQty = (e, element) => {
     e.preventDefault();
-    if(element.productQty == 1){
-      deleteOrder(element._id).then((res)=>{
-        if(res.data.status){
-          fetchOrderByUserId()
+    if (element.productQty == 1) {
+      deleteOrder(element._id).then((res) => {
+        if (res.data.status) {
+          fetchOrderByUserId();
         }
-      })
-      navigate('/cart')
+      });
+      navigate("/cart");
     }
     if (element.productQty > 1) {
-      let updateQty = { ...element, productQty: element.productQty - 1 };
+      let price =
+        element.productId.price > 0
+          ? element.productId.price
+          : element.productId.quaterPrice;
+      let updateQty = {
+        ...element,
+        productQty: element.productQty - 1,
+        totalProductPrice: element.totalProductPrice - price,
+      };
       editOrder(element._id, updateQty).then((res) => {
         console.log("Res", res);
-        fetchOrderByUserId()
+        fetchOrderByUserId();
       });
     }
   };
 
   const increaseQty = (e, element) => {
     e.preventDefault();
-    let updateQty = { ...element, productQty: element.productQty + 1 };
+    let price =
+      element.productId.price > 0
+        ? element.productId.price
+        : element.productId.quaterPrice;
+    let updateQty = {
+      ...element,
+      productQty: element.productQty + 1,
+      totalProductPrice: element.totalProductPrice + price,
+    };
     editOrder(element._id, updateQty).then((res) => {
       console.log("Res", res);
-      fetchOrderByUserId()
+      fetchOrderByUserId();
     });
   };
 
-  const fetchOrderByUserId = () =>{
-    getOrderByUserId(user._id).then((element)=>{
-      setCart(element.data)
-    }).catch((err)=>{
-      console.log("Error ", err);
-    })
-  }
+  const fetchOrderByUserId = () => {
+    getOrderByUserId(user._id)
+      .then((element) => {
+        let totalAmount = 0;
+        element.data.map((ele) => {
+          totalAmount += ele.totalProductPrice;
+        });
+        setCart({ data: element.data, totalPrice: totalAmount });
+      })
+      .catch((err) => {
+        console.log("Error ", err);
+      });
+  };
 
-  useEffect(()=>{
-    fetchOrderByUserId()
-  },[])
-  // console.log("Cart", cart);
+  useEffect(() => {
+    fetchOrderByUserId();
+  }, []);
+  console.log("Cart>>>>>>>>>>>>>", cart);
   return (
     <Box width="90%" sx={{ marginBottom: "70px" }}>
       {/* <Paper> */}
@@ -83,8 +109,8 @@ function Cart() {
         <Typography fontWeight="bold" sx={{ margin: 1.5 }}>
           Your Cart
         </Typography>
-        {cart.length > 0 &&
-          cart.map((element) => {
+        {cart.data.length > 0 &&
+          cart.data.map((element) => {
             return (
               <Grid container spacing={2}>
                 <Grid item xs={6}>
@@ -148,9 +174,7 @@ function Cart() {
                       </Grid>
                       <Grid align="center" item xs={4}>
                         <Typography sx={{ marginTop: "-3px" }}>
-                          {element.productId.price
-                            ? element.productId.price
-                            : element.productId.quaterPrice}
+                          {element.totalProductPrice}
                         </Typography>
                       </Grid>
                     </Grid>
@@ -184,21 +208,27 @@ function Cart() {
           <Grid align="right" item xs={4}>
             <Stack container direction="row" sx={{ margin: 1.5 }}>
               <CurrencyRupeeIcon sx={{ fontSize: "1rem" }} />
-              <Typography sx={{ marginTop: "-3px" }}>1200</Typography>
+              <Typography sx={{ marginTop: "-3px" }}>
+                {cart.totalPrice}
+              </Typography>
             </Stack>
             <Stack container direction="row" sx={{ margin: 1.5 }}>
               <CurrencyRupeeIcon sx={{ fontSize: "1rem" }} />
-              <Typography sx={{ marginTop: "-3px" }}>120</Typography>
+              <Typography sx={{ marginTop: "-3px" }}>
+                {cart.totalPrice * 0.18}
+              </Typography>
             </Stack>
             <Stack container direction="row" sx={{ margin: 1.5 }}>
               <CurrencyRupeeIcon sx={{ fontSize: "1rem" }} />
-              <Typography fontWeight="bold" sx={{ marginTop: "-3px" }}>1320</Typography>
+              <Typography fontWeight="bold" sx={{ marginTop: "-3px" }}>
+                {cart.totalPrice + cart.totalPrice * 0.18}
+              </Typography>
             </Stack>
           </Grid>
         </Grid>
       </Card>
-       {/* Check Out */}
-       <Card
+      {/* Check Out */}
+      <Card
         justify="center"
         sx={{
           fontSize: 12,
