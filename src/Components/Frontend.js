@@ -38,7 +38,7 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
-import CancelIcon from '@mui/icons-material/Cancel';
+import CancelIcon from "@mui/icons-material/Cancel";
 import Popover from "@mui/material/Popover";
 import { padding } from "@mui/system";
 
@@ -52,7 +52,6 @@ const paperStyle = {
 const btnStyle = { bgcolor: "#FFA500", borderRadius: "20px" };
 
 function Frontend() {
-
   const navigate = useNavigate();
   //const cart = useSelector((state) => state.cart.cart);
   const menuItems = useSelector((state) => state.menuItems.menuItems);
@@ -60,16 +59,42 @@ function Frontend() {
   const dispatch = useDispatch();
 
   const [categories, setCategories] = useState([]);
+  const [price, setPrice] = useState({
+    fullPrice: 0,
+    halfPrice: 0,
+    quaterPrice: 0,
+  });
+  const [qty, setQty] = useState({
+    fullQty: 1,
+    halfQty: 1,
+    quaterQty: 1,
+  });
+  const [visibleQty, setVisibleQty] = useState({
+    fullQty: false,
+    halfQty: false,
+    quaterQty: false,
+  });
   const [cart, setCart] = useState({ data: [], totalPrice: 0, totalItems: 0 });
   const [anchorEl, setAnchorEl] = React.useState(null);
 
-  console.log("Frontent>>>>>>>>>>>>>>>>>", cart);
+  console.log("Frontent>>>>>>>>>>>>>>>>>", visibleQty);
+
+  // const handlePortionPrice = (val) => {
+  //   setPrice(val);
+  //   console.log(">>>>>>>>>>>", price);
+  // };
 
   const portionPopover = (element) => {
-    fetchOrderByUserId()
-    console.log("Check >>>>>>>>>>>>", cart);
-    setAnchorEl( element );
+    setAnchorEl(element);
+    setPrice({
+      fullPrice: element.fullPrice,
+      halfPrice: element.halfPrice,
+      quaterPrice: element.quaterPrice,
+    });
+    // console.log(">>>>>>>>>>>>>", price);
   };
+
+  console.log(">>>>>>>>>>>", price);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -96,21 +121,25 @@ function Frontend() {
   // })
 
   const addToCart = (element) => {
+    if (element.portion) {
+      portionPopover(element);
+    }
+
     let data = {
       userId: user._id,
       productId: element._id,
-      productQty: 1,
-      totalProductPrice: element.price ? element.price : element.quaterPrice,
+      productFullQty: 1,
+      productHalfQty: 0,
+      productQuaterQty: 0,
+      totalProductPrice: element.price ? element.price : element.fullPrice,
       status: 1,
       timeStamp: 1,
     };
 
     insertOrder(data)
       .then((res) => {
-        // fetchCardData();
         if (res.data.status) {
           fetchOrderByUserId();
-          portionPopover(element);
         }
       })
       .catch((err) => {
@@ -120,32 +149,30 @@ function Frontend() {
 
   const decreaseQty = (e, element) => {
     e.preventDefault();
-    if (element.productQty == 1) {
+    if (element.productFullQty == 1) {
       deleteOrder(element._id).then((res) => {
         if (res.data.status) {
           fetchOrderByUserId();
         }
       });
     }
-    if (element.productQty > 1) {
+    if (element.productFullQty > 1) {
       let price =
         element.productId.price > 0
           ? element.productId.price
           : element.productId.quaterPrice;
       let updateQty = {
         ...element,
-        productQty: element.productQty - 1,
+        productFullQty: element.productFullQty - 1,
         totalProductPrice: element.totalProductPrice - price,
       };
       editOrder(element._id, updateQty).then((res) => {
-        console.log("Res", res);
         fetchOrderByUserId();
       });
     }
   };
 
   const increaseQty = (e, element) => {
-    // console.log("Check>>>>>>>>>>>>", element);
     e.preventDefault();
     let price =
       element.productId.price > 0
@@ -153,14 +180,45 @@ function Frontend() {
         : element.productId.quaterPrice;
     let updateQty = {
       ...element,
-      productQty: element.productQty + 1,
+      productFullQty: element.productFullQty + 1,
       totalProductPrice: element.totalProductPrice + price,
     };
 
     editOrder(element._id, updateQty).then((res) => {
-      // console.log("Res", res);
       fetchOrderByUserId();
     });
+  };
+
+  const decreaseQtyAtPanel = (e, element) => {
+    e.preventDefault()
+    if (qty.fullQty === 1 && qty.halfQty === 1 && qty.quaterQty === 1) {
+      setAnchorEl(null);
+    }
+    // console.log("111111111111>>>>>>>>>>>", element);
+    if (visibleQty.fullQty) {
+      setQty({ ...qty, fullQty: qty.fullQty - 1 });
+      setPrice({...price, fullPrice: price.fullPrice - element.productId.fullPrice});
+    } else if (visibleQty.halfQty) {
+      setQty({ ...qty, halfQty: qty.halfQty - 1 });
+      setPrice({...price, halfPrice: price.halfPrice - element.productId.halfPrice});
+    } else if (visibleQty.quaterQty) {
+      setQty({ ...qty, quaterQty: qty.quaterQty - 1 });
+      setPrice({...price, quaterPrice: price.quaterPrice - element.productId.fullPrice});
+    }
+  };
+
+  const increaseQtyAtPanel = (e, element) => {
+    console.log("<>>>>>>>>>>>>>>");
+    if (visibleQty.fullQty) {
+      setQty({ ...qty, fullQty: qty.fullQty + 1 });
+      setPrice({...price, fullPrice: price.fullPrice + element.productId.fullPrice});
+    } else if (visibleQty.halfQty) {
+      setQty({ ...qty, halfQty: qty.halfQty + 1 });
+      setPrice({...price, halfPrice: price.halfPrice + element.productId.halfPrice});
+    } else if (visibleQty.quaterQty) {
+      setQty({ ...qty, quaterQty: qty.quaterQty + 1 });
+      setPrice({...price, quaterPrice: price.quaterPrice + element.productId.fullPrice});
+    }
   };
 
   const handleNext = () => {
@@ -170,7 +228,6 @@ function Frontend() {
   const fetchCategories = () => {
     getCategories()
       .then((val) => {
-        //console.log("Categories Items :- ", val.data);
         setCategories(val.data);
       })
       .catch((err) => {
@@ -185,7 +242,7 @@ function Frontend() {
         let totalAmount = 0;
         let totalItems = 0;
         element.data.map((ele) => {
-          totalItems += ele.productQty;
+          totalItems += ele.productFullQty;
           totalAmount += ele.totalProductPrice;
         });
         setCart({
@@ -197,7 +254,7 @@ function Frontend() {
       .catch((err) => {
         console.log("Error ", err);
       });
-      console.log("po>>>>>>>", cart);
+    // console.log("po>>>>>>>", cart);
   };
 
   useEffect(() => {
@@ -388,7 +445,7 @@ function Frontend() {
                                       sx={{ marginTop: "4px" }}
                                     >
                                       <Typography fontWeight="bold">
-                                        {inCart[0].productQty}
+                                        {inCart[0].productFullQty}
                                       </Typography>
                                     </Grid>
                                     <Grid
@@ -568,178 +625,271 @@ function Frontend() {
             </Grid>
           </Grid>
         </Popover> */}
-        {/* {let cart.data.filter((cartItem)=>{
-            if(cartItem.productId._id === anchorEl?._id){
-               return cartItem;
-            }
-          })}
-          {console.log("ygtyfytf", cart.data)} */}
-        <CancelIcon fontSize="large" />
-        <Dialog
-          fullWidth
-          sx={{
-            width: "116%",
-            margin: "-32px",
-            borderRadius: "30px",
-            top: "11%",
-          }}
-          open={open}
-          onClose={handleClose}
-        >
-          <CancelIcon align='center' />
-          <CardMedia
-            sx={{ p: 2, width: "90%", borderRadius: "25px" }}
-            component="img"
-            alt={anchorEl?.menuImage}
-            height="200"
-            image={`http://localhost:9000/images/${anchorEl?.menuImage}`}
-          />
-          <RadioButtonCheckedIcon
-            sx={{
-              ml: 2,
-              color: anchorEl?.isVeg === "Veg" ? "#009900" : "#FF0000",
-            }}
-          />
-          <Grid container spacing={2}>
-            <Grid item xs={8}>
-              <Typography fontWeight="bold" sx={{ p: 2 }}>
-                {anchorEl?.name}
-              </Typography>
-            </Grid>
-            <Grid align="right" item xs={2}>
-              <FavoriteBorderIcon />
-            </Grid>
-            <Grid align="left" item xs={2}>
-              <ShareIcon />
-            </Grid>
-          </Grid>
-          <Divider />
-          <Grid container spacing={2}>
-            <Grid sx={{ m: 2 }} item xs={6}>
-              <Typography fontWeight="bold">Quantity</Typography>
-              <Typography sx={{ fontSize: "12px" }}>
-                Select 1 out of 3 options
-              </Typography>
-            </Grid>
-            <Grid align="right" sx={{ mt: 3 }} item xs={4}>
-              <Box
-                sx={{
-                  p: 0.3,
-                  width: "50%",
-                  height: "14px",
-                  borderRadius: "5px",
-                  border: "1px solid red",
-                }}
-              >
-                <Typography sx={{ fontSize: "10px", color: "#FF0000" }}>
-                  REQUIRED
-                </Typography>
-              </Box>
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={8}>
-              <Typography sx={{ fontSize: "15px", pl: 2, pb: 3 }}>
-                Full
-              </Typography>
-            </Grid>
-            <Grid align="right" item xs={4}>
-              <Stack direction="row" spacing={0}>
-                <CurrencyRupeeIcon sx={{ fontSize: "15px", mt: "3px" }} />
-                <Typography sx={{ fontSize: "15px" }}>100</Typography>
-                <FormControlLabel
-                  control={<Radio />}
-                  sx={{ fontSize: "15px", mt: -1.2, ml: "1px" }}
-                />
-              </Stack>
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={8}>
-              <Typography sx={{ fontSize: "15px", pl: 2, pb: 3 }}>
-                Half
-              </Typography>
-            </Grid>
-            <Grid align="right" item xs={4}>
-              <Stack direction="row" spacing={0}>
-                <CurrencyRupeeIcon sx={{ fontSize: "15px", mt: "3px" }} />
-                <Typography sx={{ fontSize: "15px" }}>200</Typography>
-                <FormControlLabel
-                  control={<Radio />}
-                  sx={{ fontSize: "15px", mt: -1.2, ml: "1px" }}
-                />
-              </Stack>
-            </Grid>
-          </Grid>
-          <Grid container spacing={2}>
-            <Grid item xs={8}>
-              <Typography sx={{ fontSize: "15px", pl: 2, pb: 3 }}>
-                Quater
-              </Typography>
-            </Grid>
-            <Grid align="right" item xs={4}>
-              <Stack direction="row" spacing={0}>
-                <CurrencyRupeeIcon sx={{ fontSize: "15px", mt: "3px" }} />
-                <Typography sx={{ fontSize: "15px" }}>300</Typography>
-                <FormControlLabel
-                  control={<Radio />}
-                  sx={{ fontSize: "15px", mt: -1.2, ml: "1px" }}
-                />
-              </Stack>
-            </Grid>
-          </Grid>
-          <Divider sx={{ fontWeight: "bold" }} />
-          
-          <Grid container spacing={1}>
-            <Grid item xs={4}>
-              <Box
-                sx={{
-                  border: 1,
-                  bgcolor: "background.paper",
-                  m: 1,
-                  borderColor: "#FF0000",
-                  borderRadius: "10px",
-                  width: "6rem",
-                  height: "2rem",
-                }}
-              >
-                <Grid container spacing={1}>
-                  <Grid
-                    item
-                    xs={4}
+        {cart.data.map((cartItem) => {
+          if (cartItem.productId._id === anchorEl?._id) {
+            // console.log("cartItem : ", cartItem);
+            return (
+              <>
+                <Dialog
+                  fullWidth
+                  sx={{
+                    position: "absolute",
+                    width: "116%",
+                    margin: "-32px",
+                    borderRadius: "30px",
+                    top: "11%",
+                  }}
+                  open={open}
+                  onClose={handleClose}
+                >
+                  <CancelIcon
+                    onClick={handleClose}
                     sx={{
-                      marginTop: "4px",
-                      marginLeft: "4px",
+                      position: "relative",
+                      overflow: "visible",
+                      left: "45%",
                     }}
+                    align="center"
+                    fontSize="large"
+                  />
+                  <CardMedia
+                    sx={{ p: 2, width: "90%", borderRadius: "25px" }}
+                    component="img"
+                    alt={anchorEl?.menuImage}
+                    height="200"
+                    image={`http://localhost:9000/images/${anchorEl?.menuImage}`}
+                  />
+                  <RadioButtonCheckedIcon
+                    sx={{
+                      ml: 2,
+                      color: anchorEl?.isVeg === "Veg" ? "#009900" : "#FF0000",
+                    }}
+                  />
+                  <Grid container spacing={2}>
+                    <Grid item xs={8}>
+                      <Typography fontWeight="bold" sx={{ p: 2 }}>
+                        {anchorEl?.name}
+                      </Typography>
+                    </Grid>
+                    <Grid align="right" item xs={2}>
+                      <FavoriteBorderIcon />
+                    </Grid>
+                    <Grid align="left" item xs={2}>
+                      <ShareIcon />
+                    </Grid>
+                  </Grid>
+                  <Divider />
+                  <Grid container spacing={2}>
+                    <Grid sx={{ m: 2 }} item xs={6}>
+                      <Typography fontWeight="bold">Quantity</Typography>
+                      <Typography sx={{ fontSize: "12px" }}>
+                        Select 1 out of 3 options
+                      </Typography>
+                    </Grid>
+                    <Grid align="right" sx={{ mt: 3 }} item xs={4}>
+                      <Box
+                        sx={{
+                          p: 0.3,
+                          width: "50%",
+                          height: "14px",
+                          borderRadius: "5px",
+                          border: "1px solid red",
+                        }}
+                      >
+                        <Typography sx={{ fontSize: "10px", color: "#FF0000" }}>
+                          REQUIRED
+                        </Typography>
+                      </Box>
+                    </Grid>
+                  </Grid>
+                  <RadioGroup
+                    aria-labelledby="demo-radio-buttons-group-label"
+                    defaultValue={cartItem?.productId.fullPrice}
+                    name="radio-buttons-group"
                   >
-                    <RemoveIcon sx={{ color: "#FF0000" }} />
+                    <Grid container spacing={2}>
+                      <Grid item xs={8}>
+                        <Typography sx={{ fontSize: "15px", pl: 2, pb: 3 }}>
+                          Full
+                        </Typography>
+                      </Grid>
+                      <Grid align="right" item xs={4}>
+                        <Stack direction="row" spacing={0}>
+                          <CurrencyRupeeIcon
+                            sx={{ fontSize: "15px", mt: "3px" }}
+                          />
+                          <Typography sx={{ fontSize: "15px" }}>
+                            {cartItem?.productId.fullPrice}
+                          </Typography>
+                          <FormControlLabel
+                            onClick={(e) => {
+                              // setPrice(e.target.value);
+                              setVisibleQty({
+                                ...visibleQty,
+                                fullQty: true,
+                                halfQty: false,
+                                quaterQty: false,
+                              });
+                              // setQty({...qty, fullQty: qty.fullQty + 1 })
+                            }}
+                            value={cartItem?.productId.fullPrice}
+                            control={<Radio />}
+                            sx={{ fontSize: "15px", mt: -1.2, ml: "1px" }}
+                          />
+                        </Stack>
+                      </Grid>
+                    </Grid>
+                    <Grid container spacing={2}>
+                      <Grid item xs={8}>
+                        <Typography sx={{ fontSize: "15px", pl: 2, pb: 3 }}>
+                          Half
+                        </Typography>
+                      </Grid>
+                      <Grid align="right" item xs={4}>
+                        <Stack direction="row" spacing={0}>
+                          <CurrencyRupeeIcon
+                            sx={{ fontSize: "15px", mt: "3px" }}
+                          />
+                          <Typography sx={{ fontSize: "15px" }}>
+                            {cartItem?.productId.halfPrice}
+                          </Typography>
+                          <FormControlLabel
+                            onClick={(e) => {
+                              // setPrice(e.target.value);
+                              setVisibleQty({
+                                ...visibleQty,
+                                fullQty: false,
+                                halfQty: true,
+                                quaterQty: false,
+                              });
+                              // setQty({...qty, halfQty: qty.halfQty + 1 })
+                            }}
+                            value={cartItem?.productId.halfPrice}
+                            control={<Radio />}
+                            sx={{ fontSize: "15px", mt: -1.2, ml: "1px" }}
+                          />
+                        </Stack>
+                      </Grid>
+                    </Grid>
+                    <Grid container spacing={2}>
+                      <Grid item xs={8}>
+                        <Typography sx={{ fontSize: "15px", pl: 2, pb: 3 }}>
+                          Quater
+                        </Typography>
+                      </Grid>
+                      <Grid align="right" item xs={4}>
+                        <Stack direction="row" spacing={0}>
+                          <CurrencyRupeeIcon
+                            sx={{ fontSize: "15px", mt: "3px" }}
+                          />
+                          <Typography sx={{ fontSize: "15px" }}>
+                            {cartItem?.productId.quaterPrice}
+                          </Typography>
+                          <FormControlLabel
+                            onClick={(e) => {
+                              // setPrice(e.target.value);
+                              setVisibleQty({
+                                ...visibleQty,
+                                fullQty: false,
+                                halfQty: false,
+                                quaterQty: true,
+                              });
+                              // setQty({...qty, quaterQty: qty.quaterQty + 1 })
+                            }}
+                            value={cartItem?.productId.quaterPrice}
+                            control={<Radio />}
+                            sx={{ fontSize: "15px", mt: -1.2, ml: "1px" }}
+                          />
+                        </Stack>
+                      </Grid>
+                    </Grid>
+                  </RadioGroup>
+                  <Divider sx={{ fontWeight: "bold" }} />
+
+                  <Grid container spacing={1}>
+                    <Grid item xs={4}>
+                      <Box
+                        sx={{
+                          border: 1,
+                          bgcolor: "background.paper",
+                          m: 1,
+                          borderColor: "#FF0000",
+                          borderRadius: "10px",
+                          width: "6rem",
+                          height: "2rem",
+                        }}
+                      >
+                        <Grid container spacing={1}>
+                          <Grid
+                            item
+                            xs={4}
+                            sx={{
+                              marginTop: "4px",
+                              marginLeft: "4px",
+                            }}
+                          >
+                            <RemoveIcon
+                              onClick={(e) => decreaseQtyAtPanel(e, cartItem)}
+                              sx={{ color: "#FF0000" }}
+                            />
+                          </Grid>
+                          <Grid
+                            align="center"
+                            item
+                            xs={3}
+                            sx={{ marginTop: "4px" }}
+                          >
+                            <Typography fontWeight="bold">
+                              {visibleQty.fullQty
+                                ? qty.fullQty
+                                : visibleQty.halfQty
+                                ? qty.halfQty
+                                : qty.quaterQty}
+                            </Typography>
+                          </Grid>
+                          <Grid
+                            align="right"
+                            item
+                            xs={4}
+                            sx={{ marginTop: "4px" }}
+                          >
+                            <AddIcon
+                              onClick={(e) => increaseQtyAtPanel(e, cartItem)}
+                              sx={{ color: "#FF0000" }}
+                            />
+                          </Grid>
+                        </Grid>
+                      </Box>
+                    </Grid>
+                    <Grid item xs={8}>
+                      <Button
+                        variant="contained"
+                        sx={{
+                          width: "90%",
+                          height: "2rem",
+                          m: 1,
+                          bgcolor: "#FF0000",
+                        }}
+                      >
+                        <Typography>Add Item</Typography>
+                        <CurrencyRupeeIcon fontSize="25px" />
+                        <Typography>
+                          {visibleQty.fullQty
+                            ? price.fullPrice
+                            : visibleQty.halfQty
+                            ? price.halfPrice
+                            : price.quaterPrice}
+                        </Typography>
+                      </Button>
+                    </Grid>
                   </Grid>
-                  <Grid align="center" item xs={3} sx={{ marginTop: "4px" }}>
-                    <Typography fontWeight="bold">
-                      {/* {avaInCart[0].productQty} */}
-                    </Typography>
-                  </Grid>
-                  <Grid align="right" item xs={4} sx={{ marginTop: "4px" }}>
-                    <AddIcon
-                      // onClick={(e) => increaseQty(e, anchorEl?.data)}
-                      sx={{ color: "#FF0000" }}
-                    />
-                  </Grid>
-                </Grid>
-              </Box>
-            </Grid>
-            <Grid item xs={8}>
-              <Button
-                variant="contained"
-                sx={{ width: "90%", height: "2rem", m: 1, bgcolor: "#FF0000" }}
-              >
-                <Typography>Add Item</Typography>
-                <CurrencyRupeeIcon fontSize="25px" />
-                {/* <Typography>{avaInCart[0].totalProductPrice}</Typography> */}
-              </Button>
-            </Grid>
-          </Grid>
-        </Dialog>
+                </Dialog>
+                ;
+              </>
+            );
+          }
+        })}
+
         {/* <Box
           justify="center"
           sx={{
