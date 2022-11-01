@@ -65,7 +65,9 @@ function Login() {
     // document.cookie = `mobileNo=${mobileNo}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
     // document.cookie = `loggedIn=${true}; expires=Sun, 1 Jan 2023 00:00:00 UTC; path=/`;
   };
-  console.log(">>>>>>>>>>>>", userId );
+
+  // console.log(">>>>>>>>>>>>", userId );
+  
   return (
     <Box component="form" sx={{ width: "100%", marginTop: "70px" }}>
       <Paper display="flex" elevation={10} id="login" style={paperStyle}>
