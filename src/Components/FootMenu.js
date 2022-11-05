@@ -12,7 +12,7 @@ const styleLink = { margin: 1.5, color: '#fff' }
 function FootMenu() {
   return (
     <Box>
-      <AppBar position="fixed" sx={{ bgcolor: "#ff9999", height: '60px', top: 'auto', bottom: -10, zIndex: 12 }}>
+      <AppBar position="fixed" sx={{ bgcolor: "#2E2EFF", height: '60px', top: 'auto', bottom: -10, zIndex: 12 }}>
         <Grid container spacing={3} >
           <Grid item xs={3} >
             <Link to='/'><HomeIcon fontSize='medium' sx={styleLink} /></Link>

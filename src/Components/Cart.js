@@ -14,6 +14,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setCart } from "./store/reducer/cartSlice";
 import {
   getOrder,
+  getOrderByStatus,
   editOrder,
   deleteOrder,
   getOrderByUserId,
@@ -34,64 +35,98 @@ function Cart() {
 
   const decreaseQty = (e, element) => {
     e.preventDefault();
-    if (element.productQty == 1) {
+    if (element.qty > 1) {
+      let updatePrice =
+      element.productFull
+      ? element.productId.fullPrice
+      : element.productHalf
+      ? element.productId.halfPrice
+      : element.productQuater
+      ? element.productId.quaterPrice
+      : element.productId.price
+      let updateQty = {
+        ...element,
+        qty: element.qty - 1,
+        totalProductPrice: element.totalProductPrice - updatePrice,
+      };
+      editOrder(element._id, updateQty).then((res) => {
+        console.log("Res", res);
+        fetchOrderByStatus();
+      });
+    }else{
       deleteOrder(element._id).then((res) => {
+        console.log("Check ");
         if (res.data.status) {
-          fetchOrderByUserId();
+          fetchOrderByStatus();
         }
       });
       navigate("/cart");
     }
-    if (element.productQty > 1) {
-      let price =
-        element.productId.price > 0
-          ? element.productId.price
-          : element.productId.quaterPrice;
-      let updateQty = {
-        ...element,
-        productQty: element.productQty - 1,
-        totalProductPrice: element.totalProductPrice - price,
-      };
-      editOrder(element._id, updateQty).then((res) => {
-        console.log("Res", res);
-        fetchOrderByUserId();
-      });
-    }
   };
 
   const increaseQty = (e, element) => {
+    // console.log("Decrease Check>>>>>>>", element);
     e.preventDefault();
-    let price =
-      element.productId.price > 0
-        ? element.productId.price
-        : element.productId.quaterPrice;
-    let updateQty = {
+    let updatePrice = element.productFull
+      ? element.productId.fullPrice
+      : element.productHalf
+      ? element.productId.halfPrice
+      : element.productQuater
+      ? element.productId.quaterPrice
+      : element.productId.price;
+    let update = {
       ...element,
-      productQty: element.productQty + 1,
-      totalProductPrice: element.totalProductPrice + price,
+      qty: element.qty + 1,
+      totalProductPrice: element.totalProductPrice + updatePrice,
     };
-    editOrder(element._id, updateQty).then((res) => {
+    editOrder(element._id, update).then((res) => {
       console.log("Res", res);
-      fetchOrderByUserId();
+      fetchOrderByStatus();
     });
   };
 
-  const fetchOrderByUserId = () => {
-    getOrderByUserId(user._id)
-      .then((element) => {
-        let totalAmount = 0;
-        element.data.map((ele) => {
+  const handlePayment = (cartItems, statusID) =>{
+    console.log("Check Pay Later>>>>>>>>>", cartItems);
+    cartItems.data.map((element)=>{
+      let update = {
+        ...element,
+        status: statusID
+      };
+      editOrder(element._id, update).then((res) => {
+        console.log("Res", res);
+        fetchOrderByStatus();
+      });
+    })
+  }
+
+  const fetchOrderByStatus = () =>{
+    getOrderByStatus({userId: user._id, status: 0 }).then((res)=>{
+      console.log("KKKKKKK>>>>>>>", res.data);
+      let totalAmount = 0;
+        res.data.map((ele) => {
           totalAmount += ele.totalProductPrice;
         });
-        setCart({ data: element.data, totalPrice: totalAmount });
-      })
-      .catch((err) => {
-        console.log("Error ", err);
-      });
-  };
+        setCart({ data: res.data, totalPrice: totalAmount });
+    })
+  } 
+
+  // const fetchOrderByUserId = () => {
+  //   getOrderByUserId(user._id)
+  //     .then((element) => {
+  //       let totalAmount = 0;
+  //       element.data.map((ele) => {
+  //         totalAmount += ele.totalProductPrice;
+  //       });
+  //       setCart({ data: element.data, totalPrice: totalAmount });
+  //     })
+  //     .catch((err) => {
+  //       console.log("Error ", err);
+  //     });
+  // };
 
   useEffect(() => {
-    fetchOrderByUserId();
+    // fetchOrderByUserId();
+    fetchOrderByStatus();
   }, []);
   console.log("Cart>>>>>>>>>>>>>", cart);
   return (
@@ -111,6 +146,7 @@ function Cart() {
         </Typography>
         {cart.data.length > 0 &&
           cart.data.map((element) => {
+            console.log("My cart>>>>>>", element);
             return (
               <Grid container spacing={2}>
                 <Grid item xs={6}>
@@ -120,9 +156,13 @@ function Cart() {
                   <Stack container direction="row" sx={{ margin: 1.5 }}>
                     <CurrencyRupeeIcon sx={{ fontSize: "1rem" }} />
                     <Typography sx={{ marginTop: "-3px" }}>
-                      {element.productId.price
-                        ? element.productId.price
-                        : element.productId.quaterPrice}
+                      {element.productFull
+                        ? element.productId.fullPrice
+                        : element.productHalf
+                        ? element.productId.halfPrice
+                        : element.productQuater
+                        ? element.productId.quaterPrice
+                        : element.productId.price}
                     </Typography>
                   </Stack>
                 </Grid>
@@ -155,9 +195,7 @@ function Cart() {
                         xs={3}
                         sx={{ marginTop: "4px" }}
                       >
-                        <Typography fontWeight="bold">
-                          {element.productQty}
-                        </Typography>
+                        <Typography fontWeight="bold">{element.qty}</Typography>
                       </Grid>
                       <Grid item xs={4} sx={{ marginTop: "4px" }}>
                         <AddIcon
@@ -237,8 +275,21 @@ function Cart() {
           margin: 2,
         }}
       >
-        <Typography fontWeight="bold" sx={{ margin: 1.5 }}>
-          Check Out
+        <Typography onClick={()=>handlePayment(cart, 1)} fontWeight="bold" sx={{ margin: 1.5 }}>
+          Pay At Resturant
+        </Typography>
+      </Card>
+      <Card
+        justify="center"
+        sx={{
+          fontSize: 12,
+          width: "100%",
+          bgcolor: "#fff",
+          margin: 2,
+        }}
+      >
+        <Typography onClick={()=>handlePayment(cart, 2)} fontWeight="bold" sx={{ margin: 1.5 }}>
+          Proceed to Check Out
         </Typography>
       </Card>
       {/* </Paper> */}

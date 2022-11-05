@@ -35,6 +35,11 @@ export const getOrderByID = (id) =>{
     return axios.get(`http://localhost:9000/order/${id}`)
 }
 
+export const getOrderByStatus = (data) =>{
+    console.log("By Status" , data);
+    return axios.get(`http://localhost:9000/order/`, data)
+}
+
 export const getOrderByUserId = (userId)=> {
     return axios.get(`http://localhost:9000/order/${userId}`)
 }
