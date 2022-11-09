@@ -36,9 +36,10 @@ export const getOrderByID = (id) =>{
 }
 
 export const getOrderByStatus = (data) =>{
-    console.log("By Status" , data);
-    return axios.get(`http://localhost:9000/order/`, data)
+    // console.log("Running", data);
+    return axios.post(`http://localhost:9000/order/filter/${data.status}`, data)
 }
+
 
 export const getOrderByUserId = (userId)=> {
     return axios.get(`http://localhost:9000/order/${userId}`)

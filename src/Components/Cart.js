@@ -36,14 +36,13 @@ function Cart() {
   const decreaseQty = (e, element) => {
     e.preventDefault();
     if (element.qty > 1) {
-      let updatePrice =
-      element.productFull
-      ? element.productId.fullPrice
-      : element.productHalf
-      ? element.productId.halfPrice
-      : element.productQuater
-      ? element.productId.quaterPrice
-      : element.productId.price
+      let updatePrice = element.productFull
+        ? element.productId.fullPrice
+        : element.productHalf
+        ? element.productId.halfPrice
+        : element.productQuater
+        ? element.productId.quaterPrice
+        : element.productId.price;
       let updateQty = {
         ...element,
         qty: element.qty - 1,
@@ -53,7 +52,7 @@ function Cart() {
         console.log("Res", res);
         fetchOrderByStatus();
       });
-    }else{
+    } else {
       deleteOrder(element._id).then((res) => {
         console.log("Check ");
         if (res.data.status) {
@@ -85,47 +84,32 @@ function Cart() {
     });
   };
 
-  const handlePayment = (cartItems, statusID) =>{
+  const handlePayment = (cartItems, statusID) => {
     console.log("Check Pay Later>>>>>>>>>", cartItems);
-    cartItems.data.map((element)=>{
+    cartItems.data.map((element) => {
       let update = {
         ...element,
-        status: statusID
+        status: statusID,
       };
       editOrder(element._id, update).then((res) => {
         console.log("Res", res);
         fetchOrderByStatus();
       });
-    })
-  }
+    });
+  };
 
-  const fetchOrderByStatus = () =>{
-    getOrderByStatus({userId: user._id, status: 0 }).then((res)=>{
+  const fetchOrderByStatus = () => {
+    getOrderByStatus({ status: 0, id: user._id }).then((res) => {
       console.log("KKKKKKK>>>>>>>", res.data);
       let totalAmount = 0;
-        res.data.map((ele) => {
-          totalAmount += ele.totalProductPrice;
-        });
-        setCart({ data: res.data, totalPrice: totalAmount });
-    })
-  } 
-
-  // const fetchOrderByUserId = () => {
-  //   getOrderByUserId(user._id)
-  //     .then((element) => {
-  //       let totalAmount = 0;
-  //       element.data.map((ele) => {
-  //         totalAmount += ele.totalProductPrice;
-  //       });
-  //       setCart({ data: element.data, totalPrice: totalAmount });
-  //     })
-  //     .catch((err) => {
-  //       console.log("Error ", err);
-  //     });
-  // };
+      res.data.map((ele) => {
+        totalAmount += ele.totalProductPrice;
+      });
+      setCart({ data: res.data, totalPrice: totalAmount });
+    });
+  };
 
   useEffect(() => {
-    // fetchOrderByUserId();
     fetchOrderByStatus();
   }, []);
   console.log("Cart>>>>>>>>>>>>>", cart);
@@ -165,6 +149,15 @@ function Cart() {
                         : element.productId.price}
                     </Typography>
                   </Stack>
+                  <Typography sx={{ marginTop: "-3px" }}>
+                    {element.productFull
+                      ? "Full"
+                      : element.productHalf
+                      ? "Half"
+                      : element.productQuater
+                      ? "Quater"
+                      : ""}
+                  </Typography>
                 </Grid>
                 <Grid item xs={5} sx={{ margin: 1.5 }}>
                   <Box
@@ -275,7 +268,11 @@ function Cart() {
           margin: 2,
         }}
       >
-        <Typography onClick={()=>handlePayment(cart, 1)} fontWeight="bold" sx={{ margin: 1.5 }}>
+        <Typography
+          onClick={() => handlePayment(cart, 1)}
+          fontWeight="bold"
+          sx={{ margin: 1.5 }}
+        >
           Pay At Resturant
         </Typography>
       </Card>
@@ -288,7 +285,11 @@ function Cart() {
           margin: 2,
         }}
       >
-        <Typography onClick={()=>handlePayment(cart, 2)} fontWeight="bold" sx={{ margin: 1.5 }}>
+        <Typography
+          onClick={() => handlePayment(cart, 2)}
+          fontWeight="bold"
+          sx={{ margin: 1.5 }}
+        >
           Proceed to Check Out
         </Typography>
       </Card>

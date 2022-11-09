@@ -82,6 +82,11 @@ function Frontend() {
 
   const portionPopover = (element) => {
     setAnchorEl(element);
+    setVisibleQty({
+      fullQty: true,
+      halfQty: false,
+      quaterQty: false,
+    });
     setPrice(element.fullPrice);
     setQty(1);
     // console.log(">>>>>>>>>>>>>", price);
@@ -156,7 +161,7 @@ function Frontend() {
     insertOrder(data)
       .then((res) => {
         if (res.data.status) {
-          fetchOrderByUserId();
+          fetchOrderByStatus();
         }
       })
       .catch((err) => {
@@ -175,7 +180,7 @@ function Frontend() {
       deleteOrder(element._id).then((res) => {
         console.log("Error>>>>>>>", res.data.status);
         if (res.data.status) {
-          fetchOrderByUserId();
+          fetchOrderByStatus();
           setCheckLast(null);
         }
       });
@@ -195,7 +200,7 @@ function Frontend() {
       editOrder(element._id, updateQty).then((res) => {
         if (res.data.status) {
           // console.log("Checked");
-          fetchOrderByUserId();
+          fetchOrderByStatus();
         }
       });
     }
@@ -218,7 +223,7 @@ function Frontend() {
     };
 
     editOrder(element._id, updateOrder).then((res) => {
-      fetchOrderByUserId();
+      fetchOrderByStatus();
     });
   };
 
@@ -271,31 +276,27 @@ function Frontend() {
       });
   };
 
-  const fetchOrderByUserId = () => {
-    // console.log("Ck>>>>>>>>", user._id);
-    getOrderByUserId(user._id)
-      .then((element) => {
-        let totalAmount = 0;
+  const fetchOrderByStatus = () =>{
+    getOrderByStatus({status: 0, id: user._id}).then((res)=>{
+      console.log("KKKKKKK>>>>>>>", res.data);
+      let totalAmount = 0;
         let totalItems = 0;
-        element.data.map((ele) => {
+        res.data.map((ele) => {
           totalItems += ele.qty;
           totalAmount += ele.totalProductPrice;
         });
         setCart({
-          data: element.data,
+          data: res.data,
           totalPrice: totalAmount,
           totalItems: totalItems,
         });
-      })
-      .catch((err) => {
-        console.log("Error ", err);
-      });
-  };
-
+    })
+  }
+  
   useEffect(() => {
     fetchData();
     fetchCategories();
-    fetchOrderByUserId();
+    fetchOrderByStatus();
   }, []);
 
   console.log("Price>>>>>>>>>", price);
