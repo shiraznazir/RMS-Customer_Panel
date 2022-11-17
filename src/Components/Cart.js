@@ -39,10 +39,10 @@ function Cart() {
       let updatePrice = element.productFull
         ? element.productId.fullPrice
         : element.productHalf
-        ? element.productId.halfPrice
-        : element.productQuater
-        ? element.productId.quaterPrice
-        : element.productId.price;
+          ? element.productId.halfPrice
+          : element.productQuater
+            ? element.productId.quaterPrice
+            : element.productId.price;
       let updateQty = {
         ...element,
         qty: element.qty - 1,
@@ -69,10 +69,10 @@ function Cart() {
     let updatePrice = element.productFull
       ? element.productId.fullPrice
       : element.productHalf
-      ? element.productId.halfPrice
-      : element.productQuater
-      ? element.productId.quaterPrice
-      : element.productId.price;
+        ? element.productId.halfPrice
+        : element.productQuater
+          ? element.productId.quaterPrice
+          : element.productId.price;
     let update = {
       ...element,
       qty: element.qty + 1,
@@ -84,12 +84,34 @@ function Cart() {
     });
   };
 
+  const generateRandomNoID = () => {
+    let randomNumber = Math.floor(100000 + Math.random() * 900000);
+    randomNumber = String(randomNumber);
+    randomNumber = randomNumber.substring(0, 6);
+    return "oid_" + randomNumber;
+  };
+
   const handlePayment = (cartItems, statusID) => {
     console.log("Check Pay Later>>>>>>>>>", cartItems);
+
+    let id = generateRandomNoID();
+
+    // const checkId = cart.filter((item) => item.id === id)
+
+    //   if(checkId.length){
+    //     handlePayment()
+    //   }
+
+    let hour = new Date().getHours()
+    let min = new Date().getMinutes()
+    let timeStamp = `${hour}:${min}`
+
     cartItems.data.map((element) => {
       let update = {
         ...element,
         status: statusID,
+        id: id,
+        timeStamp: timeStamp
       };
       editOrder(element._id, update).then((res) => {
         console.log("Res", res);
@@ -143,20 +165,20 @@ function Cart() {
                       {element.productFull
                         ? element.productId.fullPrice
                         : element.productHalf
-                        ? element.productId.halfPrice
-                        : element.productQuater
-                        ? element.productId.quaterPrice
-                        : element.productId.price}
+                          ? element.productId.halfPrice
+                          : element.productQuater
+                            ? element.productId.quaterPrice
+                            : element.productId.price}
                     </Typography>
                   </Stack>
                   <Typography sx={{ marginTop: "-3px" }}>
                     {element.productFull
                       ? "Full"
                       : element.productHalf
-                      ? "Half"
-                      : element.productQuater
-                      ? "Quater"
-                      : ""}
+                        ? "Half"
+                        : element.productQuater
+                          ? "Quater"
+                          : ""}
                   </Typography>
                 </Grid>
                 <Grid item xs={5} sx={{ margin: 1.5 }}>

@@ -114,12 +114,6 @@ function Frontend() {
       });
   };
 
-  // useEffect(()=>{
-  //   getOrder().then((element)=>{
-  //     console.log("Element", element.data);
-  //   })
-  // })
-
   const addToCart = (element) => {
     let data = {
       userId: user._id,

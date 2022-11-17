@@ -40,6 +40,11 @@ export const getOrderByStatus = (data) =>{
     return axios.post(`http://localhost:9000/order/filter/${data.status}`, data)
 }
 
+export const getOrderByStatusByUser = (id) =>{
+    // console.log("Running", data);
+    return axios.get(`http://localhost:9000/order/all-order-specific-user/${id}`,)
+}
+
 
 export const getOrderByUserId = (userId)=> {
     return axios.get(`http://localhost:9000/order/${userId}`)
