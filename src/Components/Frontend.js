@@ -41,7 +41,6 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShareIcon from "@mui/icons-material/Share";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Popper from "@mui/material/Popper";
-import { padding } from "@mui/system";
 
 const paperStyle = {
   padding: 5,
@@ -135,6 +134,7 @@ function Frontend() {
   // };
 
   const addPortion = (element) => {
+    console.log("User Id in frontend", user._id);
     let data = {
       userId: user._id,
       productId: element._id,
@@ -272,7 +272,7 @@ function Frontend() {
 
   const fetchOrderByStatus = () =>{
     getOrderByStatus({status: 0, id: user._id}).then((res)=>{
-      console.log("KKKKKKK>>>>>>>", res.data);
+      // console.log("KKKKKKK>>>>>>>", res.data);
       let totalAmount = 0;
         let totalItems = 0;
         res.data.map((ele) => {
@@ -293,7 +293,7 @@ function Frontend() {
     fetchOrderByStatus();
   }, []);
 
-  console.log("Price>>>>>>>>>", price);
+  // console.log("User in frontend>>>>>>>>>", user);
 
   return (
     <Box sx={{ bgcolor: "#fbfbfb", width: "100%", position: "absolute" }}>
@@ -420,7 +420,7 @@ function Frontend() {
                             sx={{
                               marginLeft: 2,
                               color:
-                                element.isVeg === "Veg" ? "#009900" : "#FF0000",
+                                element.isVeg === "Veg" ? "#009900" : "#ef4f5f",
                             }}
                           >
                             <StopCircleOutlinedIcon />
@@ -452,7 +452,7 @@ function Frontend() {
                                     border: 1,
                                     bgcolor: "background.paper",
                                     m: 1,
-                                    borderColor: "#FF0000",
+                                    borderColor: "#ef4f5f",
                                     borderRadius: "1rem",
                                     width: "8rem",
                                     height: "2rem",
@@ -469,17 +469,17 @@ function Frontend() {
                                     >
                                       <RemoveIcon
                                         onClick={(e) => {
-                                          console.log(
-                                            "QQQQQQQQQQ",
-                                            inCart.length
-                                          );
+                                          // console.log(
+                                          //   "QQQQQQQQQQ",
+                                          //   inCart.length
+                                          // );
                                           if (inCart.length > 1) {
                                             handleDecreaseQty(e, inCart);
                                           } else {
                                             decreaseQty(e, inCart[0]);
                                           }
                                         }}
-                                        sx={{ color: "#FF0000" }}
+                                        sx={{ color: "#ef4f5f" }}
                                       />
                                     </Grid>
                                     <Grid
@@ -506,7 +506,7 @@ function Frontend() {
                                             increaseQty(e, inCart[0]);
                                           }
                                         }}
-                                        sx={{ color: "#FF0000" }}
+                                        sx={{ color: "#ef4f5f" }}
                                       />
                                     </Grid>
                                   </Grid>
@@ -526,7 +526,7 @@ function Frontend() {
                                   border: 1,
                                   bgcolor: "background.paper",
                                   m: 1,
-                                  borderColor: "#FF0000",
+                                  borderColor: "#ef4f5f",
                                   borderRadius: "1rem",
                                   width: "8rem",
                                   height: "2rem",
@@ -539,7 +539,7 @@ function Frontend() {
                                       fontWeight="bold"
                                       sx={{
                                         marginTop: "5px",
-                                        color: "#FF0000",
+                                        color: "#ef4f5f",
                                       }}
                                     >
                                       ADD
@@ -549,7 +549,7 @@ function Frontend() {
                                     <AddIcon
                                       align="right"
                                       fontSize="small"
-                                      sx={{ color: "#FF0000" }}
+                                      sx={{ color: "#ef4f5f" }}
                                     />
                                   </Grid>
                                 </Grid>
@@ -581,7 +581,7 @@ function Frontend() {
               right: "10px",
               left: "10px",
               width: "88%",
-              bgcolor: "#FF0000",
+              bgcolor: "#ef4f5f",
               borderRadius: "5px",
               padding: 1,
             }}

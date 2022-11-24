@@ -6,11 +6,20 @@ export const getMenuItem = ()=> {
 
 export const insertUser = (data)=> {
     console.log("Sending user data :- ", data)
-    return axios.post(`http://localhost:9000/user/`,data)
+    return axios.post(`http://localhost:9000/user/send-otp`,data)
 }
 
 export const getUser = (data)=> {
     return axios.get(`http://localhost:9000/user/`)
+}
+
+export const reSendOtp = (data) =>{
+    console.log("resend Otp", data);
+    return axios.put(`http://localhost:9000/user/re-send-otp`,data)
+}
+
+export const checkOtp = (data) => {
+    return axios.post(`http://localhost:9000/user/check-otp`, data);
 }
 
 export const insertOrder = (data)=>{
@@ -40,9 +49,9 @@ export const getOrderByStatus = (data) =>{
     return axios.post(`http://localhost:9000/order/filter/${data.status}`, data)
 }
 
-export const getOrderByStatusByUser = (id) =>{
+export const getMyOrder = (data) =>{
     // console.log("Running", data);
-    return axios.get(`http://localhost:9000/order/all-order-specific-user/${id}`,)
+    return axios.post(`http://localhost:9000/order/my-order/`, data)
 }
 
 

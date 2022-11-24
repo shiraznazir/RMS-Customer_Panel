@@ -10,6 +10,7 @@ import Profile from "./Components/Profile";
 import Orders from "./Components/Orders";
 import Frontend from './Components/Frontend'
 import UserEditForm from './Components/UserEditForm'
+import TopMenu from './Components/TopMenu'
 import { Routes, Route } from "react-router-dom";
 import { login } from './Components/store/reducer/userSlice'
 
@@ -25,11 +26,12 @@ function App() {
       login(user)
     )
   }, []);
-
+  // console.log("User Check>>>", user);
   return (
     <div>
       {user ? (
         <>
+          <TopMenu />
           <FootMenu />
           <Routes>
         <Route exact path="/" element={<Frontend />} />

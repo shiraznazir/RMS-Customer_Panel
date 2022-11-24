@@ -9,15 +9,23 @@ import {
   Stack,
   Button,
 } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import AssignmentIcon from "@mui/icons-material/Assignment";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { logout } from "./store/reducer/userSlice";
-import { selectUser } from './store/reducer/userSlice';
+import { selectUser } from "./store/reducer/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Routes, Route } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import HistoryIcon from "@mui/icons-material/History";
 
 const paperStyle = {
   width: { xs: "82%", md: "80%" },
@@ -38,132 +46,148 @@ const cardStyle = {
   marginTop: "10px",
 };
 
+const commonStyles = {
+  bgcolor: "#D3D3D3",
+  m: 1,
+  width: "3rem",
+  height: "3rem",
+};
+
+const iconStyle = {
+  color: "#808080",
+  mt: 1.6,
+  fontSize: "22px",
+};
+
 function Profile() {
 
-  const user = useSelector(selectUser)
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const user = useSelector(selectUser);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogout = (e) => {
-    e.preventDefault()
-    dispatch(logout())
-    document.cookie =
-      "mobileNo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/login;";
-    document.cookie =
-      "loggedIn=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/login;";
-    navigate('/login')
-
+    e.preventDefault();
+    dispatch(logout());
+    window.localStorage.removeItem('user');
+    // document.cookie =
+    //   "mobileNo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/login;";
+    // document.cookie =
+    //   "loggedIn=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/login;";
+    navigate("/login");
   };
 
-  const handleEdit = () =>{
-    navigate('/profileEdit')
-  }
+  const handleEdit = () => {
+    navigate("/profileEdit");
+  };
 
-  console.log("User Profile:- ", user.mobNo);
+  const handleCart = () => {
+    navigate("/cart");
+  };
+
+  const handleOrders = () => {
+    navigate("/orders");
+  };
+
+  const handleHistory = () => {
+    navigate("/history");
+  };
+
+  const handleBack = () => {
+    navigate("/");
+  };
+
+  // console.log("User Profile:- ", user);
+
   return (
-    <Box width="100%" sx={{ marginTop: "120px" }}>
-      <Paper elevation={5} sx={parentPaper}>
-        <Typography
-          align="center"
-          variant="h6"
-          fontWeight="bold"
-          sx={{ margin: "10px auto", padding: "5px", color: "blue" }}
-        >
-          Profile
-        </Typography>
-        <Paper alignitems="center" justifycontent="center" sx={paperStyle}>
-          <Typography align="left" variant="h6" fontWeight="bold">
-            Kallu Yadav
+    <Box sx={{ m: 3, mt: "70px" }}>
+      <Grid container spacing={1}>
+        <Grid item xs={3}>
+          <ArrowBackIosIcon onClick={handleBack} />
+        </Grid>
+        <Grid align="center" item xs={6}>
+          <Typography sx={{ fontSize: "20px" }}>My Profile</Typography>
+        </Grid>
+        <Grid align="right" item xs={3}>
+          <MoreVertIcon />
+        </Grid>
+      </Grid>
+      <Grid sx={{ m: 1, mt: 3 }} container spacing={1}>
+        <Grid sx={{ fontSize: "50px" }} item xs={3}>
+          <Avatar
+            sx={{ width: 70, height: 70 }}
+            alt="Cindy Baker"
+            src="/static/images/avatar/3.jpg"
+          />
+        </Grid>
+        <Grid sx={{ mt: 1 }} item xs={6}>
+          <Typography sx={{ fontWeight: "bold", fontSize: 20 }}>
+            {user.name ? user.name : "Paul Walker"}
           </Typography>
-          <Typography align="left" sx={{ marginTop: "10px" }}>
-            +91 {user?.mobNo}
+          <Typography>{"+91 " + user.mobNo}</Typography>
+        </Grid>
+        <Grid sx={{ mt: 1.5, color: "#808080" }} item xs={3}>
+          <BorderColorIcon onClick={handleEdit} fontSize="large" />
+        </Grid>
+      </Grid>
+      {/* Dashboard */}
+      <Grid sx={{ m: 2 }}>
+        <Typography>Dashboard</Typography>
+      </Grid>
+      {/* My Cart */}
+      <Grid container spacing={3}>
+        <Grid item xs={3}>
+          <Box align="center" sx={{ ...commonStyles, borderRadius: "50%" }}>
+            <ShoppingCartIcon sx={iconStyle} />
+          </Box>
+        </Grid>
+        <Grid sx={{ mt: 2 }} item xs={4}>
+          <Typography sx={{ fontWeight: "bold", fontSize: "1.2rem" }}>
+            My Cart
           </Typography>
-          <Typography align="left">kalluyadav@gmail.com</Typography>
-          <Grid container spacing={1}>
-            <Grid item xs={6}>
-              <Typography onClick={handleEdit} sx={{ color: "#FF0000", marginTop: "10px" }}>
-                edit profile
-              </Typography>
-            </Grid>
-            <Grid
-              item
-              xs={3}
-              sx={{
-                marginLeft: { xs: "-50px", md: "-80px" },
-                marginTop: "10px",
-                color: "#FF0000",
-              }}
-            >
-              <ArrowRightIcon />
-            </Grid>
-          </Grid>
-        </Paper>
-
-        <Link to="/orders" style={{ textDecoration: "none", color: "white" }}>
-          <Card justifycontent='center' sx={cardStyle}>
-            <CardContent sx={{ padding: "5px" }}>
-              <Grid container spacing={1}>
-                <Grid item xs={2}>
-                  {/* <Box
-                  sx={{
-                    bgcolor: "#ddd4d4",
-                    width: {xs:"12vw", md: '3vw'},
-                    height: {xs: "7vh", md: "8vh"},
-                    borderRadius: "50%",
-                  }}
-                > */}
-                  <AssignmentIcon sx={{ margin: "10px" }} />
-                  {/* </Box> */}
-                </Grid>
-
-                <Grid item xs={6}>
-                  <Typography
-                    fontWeight="bold"
-                    sx={{ marginLeft: "10px", marginTop: "10px" }}
-                  >
-                    Your Orders
-                  </Typography>
-                </Grid>
-                <Grid item align="right" xs={4} sx={{ marginTop: "10px" }}>
-                  <NavigateNextIcon />
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Link>
-
-        {/* <Link to="/login" style={{ textDecoration: "none", color: "white" }} > */}
-          <Card sx={cardStyle}>
-            <CardContent sx={{ padding: "5px" }}>
-              <Grid container spacing={1}>
-                <Grid item xs={1}>
-                  {/* <Box
-                 sx={{
-                  bgcolor: "#ddd4d4",
-                  width: {xs:"12vw", md: '3vw'},
-                  height: {xs: "7vh", md: "8vh"},
-                  borderRadius: "50%",
-                }}
-              > */}
-                  <PowerSettingsNewIcon sx={{ margin: "10px" }} />
-                  {/* </Box> */}
-                </Grid>
-                <Grid item xs={6} onClick={(e) => handleLogout(e)}>
-                  <Typography
-                    fontWeight="bold"
-                    sx={{ marginLeft: "40px", marginTop: "10px" }}
-                  >
-                    Logout
-                  </Typography>
-                </Grid>
-                <Grid item align="right" xs={5} sx={{ marginTop: "10px" }}>
-                  <NavigateNextIcon />
-                </Grid>
-              </Grid>
-            </CardContent>
-          </Card>
-        {/* </Link> */}
-      </Paper>
+        </Grid>
+        <Grid sx={{ mt: 2.5 }} align="right" item xs={4}>
+          <ArrowForwardIosIcon onClick={() => handleCart()} />
+        </Grid>
+      </Grid>
+      {/* My order */}
+      <Grid sx={{ mt: 1 }} container spacing={3}>
+        <Grid item xs={3}>
+          <Box align="center" sx={{ ...commonStyles, borderRadius: "50%" }}>
+            <ListAltIcon sx={iconStyle} />
+          </Box>
+        </Grid>
+        <Grid sx={{ mt: 2 }} item xs={5}>
+          <Typography sx={{ fontWeight: "bold", fontSize: "1.2rem" }}>
+            My Orders
+          </Typography>
+        </Grid>
+        <Grid sx={{ mt: 2.5 }} align="right" item xs={3}>
+          <ArrowForwardIosIcon onClick={() => handleOrders()} />
+        </Grid>
+      </Grid>
+      {/* recent order */}
+      <Grid sx={{ mt: 1 }} container spacing={3}>
+        <Grid item xs={3}>
+          <Box align="center" sx={{ ...commonStyles, borderRadius: "50%" }}>
+            <HistoryIcon sx={iconStyle} />
+          </Box>
+        </Grid>
+        <Grid sx={{ mt: 2 }} item xs={6}>
+          <Typography sx={{ fontWeight: "bold", fontSize: "1.2rem" }}>
+            Recent Order
+          </Typography>
+        </Grid>
+        <Grid sx={{ mt: 2.5 }} align="right" item xs={2}>
+          <ArrowForwardIosIcon onClick={() => handleHistory()} />
+        </Grid>
+      </Grid>
+      {/* my Account */}
+      <Grid sx={{ m: 2, mt: 4 }}>
+        <Typography>My Account</Typography>
+      </Grid>
+      <Grid sx={{ m: 2, color: "#FF0000" }}>
+        <Typography onClick={handleLogout}>Log Out</Typography>
+      </Grid>
     </Box>
   );
 }
