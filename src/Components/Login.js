@@ -11,7 +11,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useDispatch } from "react-redux";
 import { login } from "./store/reducer/userSlice";
 import React, { useState } from "react";
-import { insertUser, getUserByNum, checkOtp, reSendOtp } from "./api/posts";
+import { insertUser, getOldUser, checkOtp, reSendOtp } from "./api/posts";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import "../App.css";
@@ -48,7 +48,8 @@ function Login() {
     e.preventDefault();
     navigate("/");
     let date = new Date();
-    getUserByNum(mobileNo)
+    
+    getOldUser({ mobNo: mobileNo })
       .then((res) => {
         console.log("Check User ", res.data);
         if (res.data.status) {

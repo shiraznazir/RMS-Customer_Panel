@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Box,
   Paper,
@@ -17,6 +17,7 @@ import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import { logout } from "./store/reducer/userSlice";
 import { selectUser } from "./store/reducer/userSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { login } from "./store/reducer/userSlice";
 import { Link, Routes, Route } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
@@ -96,7 +97,11 @@ function Profile() {
     navigate("/");
   };
 
-  // console.log("User Profile:- ", user);
+  // useEffect(()=>{
+  //   fetchUser()
+  // },[])
+
+  console.log("User Profile:- ", user);
 
   return (
     <Box sx={{ m: 3, mt: "70px" }}>

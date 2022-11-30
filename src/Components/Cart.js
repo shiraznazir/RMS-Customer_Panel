@@ -99,12 +99,6 @@ function Cart() {
 
     let id = generateRandomNoID();
 
-    // const checkId = cart.filter((item) => item.id === id)
-
-    //   if(checkId.length){
-    //     handlePayment()
-    //   }
-
     let date = new Date();
 
     cartItems.data.map((element) => {
@@ -255,6 +249,16 @@ function Cart() {
               </Paper>
             );
           })}
+          {cart.data.length === 0 && (
+        <Box sx={{ margin: 1.5 }}>
+          <img src={img1} alt="Error" width="100%" height="100%" />
+          <Link to="/" style={{ textDecoration: "none" }}>
+            <Typography align="center" sx={{ textDecoration: "none" }}>
+              Go to Menu items
+            </Typography>
+          </Link>
+        </Box>
+      )}
       </Paper>
       {/* Bill Summary */}
       {cart.data.length > 0 && (
@@ -341,16 +345,7 @@ function Cart() {
         </Card>
       )}
       {/* </Paper> */}
-      {cart.data.length === 0 && (
-        <Box sx={{ margin: 1.5 }}>
-          <img src={img1} alt="Error" width="100%" height="100%" />
-          <Link to="/" style={{ textDecoration: "none" }}>
-            <Typography align="center" sx={{ textDecoration: "none" }}>
-              Go to Menu items
-            </Typography>
-          </Link>
-        </Box>
-      )}
+      
     </Box>
   );
 }

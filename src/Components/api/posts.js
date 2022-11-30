@@ -13,6 +13,11 @@ export const getUser = (data)=> {
     return axios.get(`http://localhost:9000/user/`)
 }
 
+export const updateUser = (data)=> {
+    console.log("User Edit >>>>>", data);
+    return axios.put(`http://localhost:9000/user//edit-user/`, data)
+}
+
 export const reSendOtp = (data) =>{
     console.log("resend Otp", data);
     return axios.put(`http://localhost:9000/user/re-send-otp`,data)
@@ -26,9 +31,14 @@ export const insertOrder = (data)=>{
     return axios.post(`http://localhost:9000/order`, data)
 }
 
-export const getUserByNum = (data)=> {
+export const getUserByNum = (num)=> {
     //console.log("Asdsad",data)
-    return axios.get(`http://localhost:9000/user/${data}`)
+    return axios.get(`http://localhost:9000/user/${num}`)
+}
+
+export const getOldUser = (data)=> {
+    //console.log("Asdsad",data)
+    return axios.post(`http://localhost:9000/user/old-user`, data)
 }
 
 export const getOrder = () =>{

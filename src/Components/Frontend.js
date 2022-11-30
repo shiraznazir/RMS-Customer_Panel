@@ -72,10 +72,6 @@ function Frontend() {
 
   const [checkLast, setCheckLast] = React.useState(null);
 
-  const handleCheckLast = (event) => {
-    // setCheckLast(checkLast ? null : event.currentTarget);
-  };
-
   const openLast = Boolean(checkLast);
   const idLast = openLast ? "simple-popper" : undefined;
 
@@ -125,16 +121,8 @@ function Frontend() {
     insertingOrder(data);
   };
 
-  // const increaseCustomise = (element) => {
-  //   // console.log("LLLLLLLLLL>>>>>>>", element);
-  //   let data = {
-  //     ...element, qty: element.qty + 1
-  //   }
-  //   insertingOrder(data)
-  // };
-
   const addPortion = (element) => {
-    console.log("User Id in frontend", user._id);
+    // console.log("User Id in frontend", user._id);
     let data = {
       userId: user._id,
       productId: element._id,
@@ -172,7 +160,7 @@ function Frontend() {
     e.preventDefault();
     if (element.qty == 1) {
       deleteOrder(element._id).then((res) => {
-        console.log("Error>>>>>>>", res.data.status);
+        // console.log("Error>>>>>>>", res.data.status);
         if (res.data.status) {
           fetchOrderByStatus();
           setCheckLast(null);
@@ -296,32 +284,9 @@ function Frontend() {
   // console.log("User in frontend>>>>>>>>>", user);
 
   return (
-    <Box sx={{ bgcolor: "#fbfbfb", width: "100%", position: "absolute" }}>
+    <Box sx={{ bgcolor: "#fbfbfb", width: "100%", position: "absolute", mt: "50px" }}>
       <Grid container spacing={0}>
-        {/* <Grid item md={4} sx={{ width: "100%" }}>
-          <Paper sx={paperStyle}>
-            <img
-              src="https://davur.dexignzone.com/codeigniter/demo/public/assets/frontend/images/counter.jpg"
-              alt="Error"
-              height="200"
-              width={"100%"}
-            />
-            <Typography variant="h6" fontWeight="bold" mt={3}>
-              Your Order in Progress Check Order
-            </Typography>
-            <Typography mt={3} sx={{ color: "#808080" }}>
-              Click on any item or Add Order Button to create order
-            </Typography>
-            <Stack direction="row" spacing={4} mt={4}>
-              <Button variant="contained" p={4} sx={btnStyle}>
-                Add Order
-              </Button>
-              <Button variant="contained" p={4} sx={btnStyle}>
-                Order Status
-              </Button>
-            </Stack>
-          </Paper>
-        </Grid> */}
+        
         <Grid item xs={12} md={8}>
           {/* categories */}
           {/* <Grid container spacing={2} sx={{ width: '100%', margin: "1px" }}>
@@ -378,9 +343,9 @@ function Frontend() {
             spacing={1}
             alignItems="center"
             justifyContent="center"
-            sx={{ width: "100%", margin: "5px", marginBottom: "70px" }}
+            sx={{ width: "100%", margin: "5px", marginBottom: "70px", mt: -1 }}
           >
-            {menuItems?.length &&
+            {
               menuItems?.map((element, index) => {
                 let inCart = cart.data.filter((cartItem) => {
                   return cartItem.productId._id === element._id;
@@ -469,10 +434,6 @@ function Frontend() {
                                     >
                                       <RemoveIcon
                                         onClick={(e) => {
-                                          // console.log(
-                                          //   "QQQQQQQQQQ",
-                                          //   inCart.length
-                                          // );
                                           if (inCart.length > 1) {
                                             handleDecreaseQty(e, inCart);
                                           } else {
@@ -556,7 +517,7 @@ function Frontend() {
                               </Box>
                             )}
                             {element.portion && (
-                              <Typography align="center">
+                              <Typography align="center" sx={{ color: "#808080"}}>
                                 Customisable
                               </Typography>
                             )}
@@ -890,16 +851,17 @@ function Frontend() {
               </Grid>
               <Grid item xs={8}>
                 <Button
+                onClick={() => addPortion(anchorEl)}
                   variant="contained"
                   sx={{
                     width: "90%",
                     height: "2rem",
                     m: 1,
-                    bgcolor: "#FF0000",
+                    bgcolor: "#ef4f5f",
                   }}
                 >
-                  <Typography onClick={() => addPortion(anchorEl)}>
-                    Add Item
+                  <Typography>
+                    Add Item 
                   </Typography>
                   <CurrencyRupeeIcon fontSize="25px" />
                   <Typography>{price}</Typography>
