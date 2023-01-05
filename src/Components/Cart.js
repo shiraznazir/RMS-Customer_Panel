@@ -52,12 +52,10 @@ function Cart() {
         totalProductPrice: element.totalProductPrice - updatePrice,
       };
       editOrder(element._id, updateQty).then((res) => {
-        // console.log("Res", res);
         fetchOrderByStatus();
       });
     } else {
       deleteOrder(element._id).then((res) => {
-        // console.log("Check ");
         if (res.data.status) {
           fetchOrderByStatus();
         }
@@ -67,7 +65,6 @@ function Cart() {
   };
 
   const increaseQty = (e, element) => {
-    // console.log("Decrease Check>>>>>>>", element);
     e.preventDefault();
     let updatePrice = element.productFull
       ? element.productId.fullPrice
@@ -82,7 +79,6 @@ function Cart() {
       totalProductPrice: element.totalProductPrice + updatePrice,
     };
     editOrder(element._id, update).then((res) => {
-      // console.log("Res", res);
       fetchOrderByStatus();
     });
   };
@@ -95,7 +91,6 @@ function Cart() {
   };
 
   const handlePayment = (cartItems, statusID) => {
-    // console.log("Check Pay Later>>>>>>>>>", cartItems);
 
     let id = generateRandomNoID();
 
@@ -109,7 +104,6 @@ function Cart() {
         timeStamp: date,
       };
       editOrder(element._id, update).then((res) => {
-        // console.log("Res", res);
         fetchOrderByStatus();
       });
     });
@@ -117,7 +111,6 @@ function Cart() {
 
   const fetchOrderByStatus = () => {
     getOrderByStatus({ status: 0, id: user._id }).then((res) => {
-      // console.log("KKKKKKK>>>>>>>", res.data);
       let totalAmount = 0;
       res.data.map((ele) => {
         totalAmount += ele.totalProductPrice;
@@ -133,7 +126,7 @@ function Cart() {
   useEffect(() => {
     fetchOrderByStatus();
   }, []);
-  // console.log("Cart user>>>>>>>>>>>>>", user);
+
   return (
     <Box width="90%" sx={{ marginBottom: "70px", mt: "70px" }}>
       {/* <Paper> */}
@@ -159,7 +152,7 @@ function Cart() {
         </Grid>
         {cart.data.length > 0 &&
           cart.data.map((element) => {
-            // console.log("My cart>>>>>>", element);
+ 
             return (
               <Paper elevation={4} sx={{ m: 2, mt: 4, pb: 1, pt: 0 }}>
                 <Grid container spacing={2}>

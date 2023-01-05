@@ -36,11 +36,11 @@ function Login() {
     status: false,
     msg: "",
   });
-  const [mobileNo, setMobileNo] = useState();
+  const [mobileNo, setMobileNo] = useState("");
   const [userId, setUserId] = useState("");
   const [isVisible, setVisible] = useState(false);
   const [user, setUser] = useState([]);
-  const [otp, setOtp] = useState();
+  const [otp, setOtp] = useState("");
 
   const dispatch = useDispatch();
 
@@ -48,17 +48,17 @@ function Login() {
     e.preventDefault();
     navigate("/");
     let date = new Date();
-    
+
     getOldUser({ mobNo: mobileNo })
       .then((res) => {
-        console.log("Check User ", res.data);
+        // console.log("Check User ", res.data);
         if (res.data.status) {
           setUser(res.data.user);
           reSendOtp(res.data.user).then((res) => {
             if (res.data.status) {
               setUser(res.data.user);
             }
-            console.log("Res Data", res.data);
+            // console.log("Res Data", res.data);
           });
           // sendOtp()
           // user.loggedIn = true;
@@ -68,7 +68,7 @@ function Login() {
           let newUser = { mobNo: mobileNo, timeStamp: date };
           insertUser(newUser).then((res) => {
             let id = res.data.userCreated;
-            console.log("res data", res.data.userCreated);
+            // console.log("res data", res.data.userCreated);
             setUser(res.data.userCreated);
           });
         }
@@ -86,9 +86,9 @@ function Login() {
     // console.log("Otp", user.otp , otp);
     checkOtp({ mobNo: mobileNo, otp })
       .then((res) => {
-        console.log("Check Otp", res.data);
+        // console.log("Check Otp", res.data);
         if (res.data.status === 0 || res.data.status === 1) {
-          console.log("Otp Matched");
+          // console.log("Otp Matched");
           dispatch(login({ ...user, loggedIn: true }));
           localStorage.setItem(
             "user",
@@ -109,12 +109,12 @@ function Login() {
       .catch((err) => {
         console.log("Error", err);
       });
-    console.log("Check Otp");
+    // console.log("Check Otp");
   };
 
-  const handleBack = () =>{
-    setVisible(false)
-  }
+  const handleBack = () => {
+    setVisible(false);
+  };
 
   // console.log("User Data>>>>>>>>>>>>", user, otp);
 
@@ -123,7 +123,7 @@ function Login() {
       <Paper display="flex" elevation={10} id="login" style={paperStyle}>
         <Grid container spacing={1}>
           <Grid item xs={2}>
-            <ArrowBackIcon onClick={handleBack}/>
+            <ArrowBackIcon onClick={handleBack} />
           </Grid>
           <Grid item xs={8} align="center">
             <Avatar style={avatarStyle}>

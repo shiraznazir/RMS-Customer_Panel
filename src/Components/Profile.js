@@ -61,7 +61,6 @@ const iconStyle = {
 };
 
 function Profile() {
-
   const user = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -69,12 +68,13 @@ function Profile() {
   const handleLogout = (e) => {
     e.preventDefault();
     dispatch(logout());
-    window.localStorage.removeItem('user');
+    window.localStorage.removeItem("user");
     // document.cookie =
     //   "mobileNo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/login;";
     // document.cookie =
     //   "loggedIn=false; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/login;";
     navigate("/login");
+    // console.log("Logout");
   };
 
   const handleEdit = () => {
@@ -90,7 +90,7 @@ function Profile() {
   };
 
   const handleHistory = () => {
-    navigate("/history");
+    navigate("/recentOrder");
   };
 
   const handleBack = () => {
@@ -101,7 +101,7 @@ function Profile() {
   //   fetchUser()
   // },[])
 
-  console.log("User Profile:- ", user);
+  // console.log("User Profile:- ", user);
 
   return (
     <Box sx={{ m: 3, mt: "70px" }}>
@@ -190,8 +190,8 @@ function Profile() {
       <Grid sx={{ m: 2, mt: 4 }}>
         <Typography>My Account</Typography>
       </Grid>
-      <Grid sx={{ m: 2, color: "#FF0000" }}>
-        <Typography onClick={handleLogout}>Log Out</Typography>
+      <Grid sx={{ m: 2, mb: 8, color: "#FF0000" }}>
+        <Typography onClick={handleLogout}>Log out</Typography>
       </Grid>
     </Box>
   );

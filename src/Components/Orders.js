@@ -26,14 +26,7 @@ import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import Chip from "@mui/material/Chip";
 import groupArray from "group-array";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 import CallIcon from "@mui/icons-material/Call";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -53,8 +46,7 @@ const cards = {
 };
 
 function Orders() {
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const user = useSelector(selectUser);
   const [orders, setOrders] = useState([]);
   const [open, setOpen] = useState(false);
@@ -73,7 +65,7 @@ function Orders() {
   const fectchDataByStatus = () => {
     getMyOrder({ id: user._id })
       .then((res) => {
-        // console.log("Before group>>>>>>>", res.data);
+        console.log("Before group>>>>>>>", res.data);
         const data = groupArray(res.data, "id");
         // console.log("After group>>>>>>>>>>>", data);
         setOrders(data);
@@ -84,7 +76,6 @@ function Orders() {
   };
 
   const handleBack = () => {
-    // console.log("Bavj jbeafsDYDFG");
     navigate("/");
   };
 
@@ -92,7 +83,7 @@ function Orders() {
     fectchDataByStatus();
   }, []);
 
-  // console.log("Check order ", objectLength);
+  // console.log("Check order1111111>>>>>>>>>>>>> ");
 
   return (
     <Box
@@ -104,7 +95,7 @@ function Orders() {
       }}
     >
       <Grid container spacing={1}>
-        <Grid sx={{ m: 2, ml:4}} item xs={2}>
+        <Grid sx={{ m: 2, ml: 4 }} item xs={2}>
           <ArrowBackIosIcon onClick={handleBack} />
         </Grid>
         <Grid item xs={8}>
@@ -197,8 +188,23 @@ function Orders() {
                       align="center"
                     > */}
                     <Chip
+                    sx={{
+                      color: orders[key][0].status === 1 ||
+                      orders[key][0].status === 2
+                        ? "#0000FF"
+                        : orders[key][0].status === 3
+                        ? "#00008B"
+                        : orders[key][0].status === 4
+                        ? "#008000"
+                        : orders[key][0].status === 5
+                        ? "#808000"
+                        : "#00FF00"
+                    }}
                       label={
-                        orders[key][0].status === 3
+                        orders[key][0].status === 1 ||
+                        orders[key][0].status === 2
+                          ? "In queue"
+                          : orders[key][0].status === 3
                           ? "Order Accepted"
                           : orders[key][0].status === 4
                           ? "Add for Kitchen"
@@ -315,13 +321,13 @@ function Orders() {
                     </Grid>
                   </Grid>
 
-                  <Typography>
+                  {/* <Typography>
                     {element.status === 3
                       ? "Order Accepted"
                       : element.status === 4
                       ? "Preparation"
                       : "Ready to Deliver"}
-                  </Typography>
+                  </Typography> */}
                 </Grid>
                 <Grid item xs={1}>
                   <RadioButtonCheckedIcon

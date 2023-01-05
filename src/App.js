@@ -8,23 +8,20 @@ import RecentOrder from "./Components/RecentOrder";
 import Cart from "./Components/Cart";
 import Profile from "./Components/Profile";
 import Orders from "./Components/Orders";
-import Frontend from './Components/Frontend'
-import UserEditForm from './Components/UserEditForm'
-import TopMenu from './Components/TopMenu'
+import Frontend from "./Components/Frontend";
+import UserEditForm from "./Components/UserEditForm";
+import TopMenu from "./Components/TopMenu";
 import { Routes, Route } from "react-router-dom";
-import { login } from './Components/store/reducer/userSlice'
+import { login } from "./Components/store/reducer/userSlice";
 
 function App() {
-
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
 
   useEffect(() => {
-    var user = JSON.parse(localStorage.getItem('user'));
+    var user = JSON.parse(localStorage.getItem("user"));
     // const browerData = document.cookie
-    dispatch(
-      login(user)
-    )
+    dispatch(login(user));
   }, []);
   // console.log("User Check>>>", user);
   return (
@@ -34,19 +31,18 @@ function App() {
           <TopMenu />
           <FootMenu />
           <Routes>
-        <Route exact path="/" element={<Frontend />} />
-        <Route exact path="/recentorder" element={<RecentOrder />} />
-        <Route exact path="/login" element={<Login />} />
-        <Route exact path="/cart" element={<Cart />} />
-        <Route exact path="/profile" element={<Profile />} />
-        <Route exact path="/orders" element={<Orders />} />
-        <Route exact path="/profileEdit" element={<UserEditForm />} />
-      </Routes>
+            <Route exact path="/" element={<Frontend />} />
+            <Route exact path="/recentOrder" element={<RecentOrder />} />
+            <Route exact path="/login" element={<Login />} />
+            <Route exact path="/cart" element={<Cart />} />
+            <Route exact path="/profile" element={<Profile />} />
+            <Route exact path="/orders" element={<Orders />} />
+            <Route exact path="/profileEdit" element={<UserEditForm />} />
+          </Routes>
         </>
       ) : (
         <Login />
       )}
-      
     </div>
   );
 }

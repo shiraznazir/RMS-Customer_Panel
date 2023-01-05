@@ -25,6 +25,7 @@ function UserEditForm() {
   const user = useSelector(selectUser);
   const dispatch = useDispatch()
   const [name, setName] = useState("");
+  const [mobNo, setMobNo] = useState("");
   const [email, setEmail] = useState("");
   const [gender, setGender] = useState("");
   const [flag, setFlag] = useState(true);
@@ -36,7 +37,7 @@ function UserEditForm() {
   });
 
   const fetchUserData = () => {
-    console.log("User>>>1", user);
+    // console.log("User>>>1", user);
     if (user.name === "undefined") {
       console.log("user>>>>>>", user.name);
     }
@@ -66,7 +67,7 @@ function UserEditForm() {
           setMsg({...msg, name: "", email: "", gender: "",  submit: res.data.msg});
           fetchUser();
         }
-        console.log("User res", res.data.user);
+        // console.log("User res", res.data.user);
       });
       setTimeout(() => {
         navigate("/profile");
@@ -78,22 +79,26 @@ function UserEditForm() {
     let num = user.mobNo
     getUserByNum(num).then((res)=>{
       if(res.data.status){
+        setName(res.data.user.name)
+        setMobNo(res.data.user.mobNo)
+        setEmail(res.data.user.email)
+        setGender(res.data.user.gender)
         dispatch(login({ ...res.data.user, loggedIn: true }));
           localStorage.setItem(
             "user",
             JSON.stringify({ ...res.data.user, loggedIn: true })
           );
       }
-      console.log("User By number", res.data);
+      // console.log("User By number", res.data);
     })
   }
 
   useEffect(() => {
     fetchUserData();
-    // fetchUser()
-  });
+    fetchUser()
+  },[]);
 
-  console.log("User Details", user.mobNo);
+  // console.log("User Details", user.mobNo);
   
   return (
     <Box sx={{ mt: "90px" }}>
@@ -118,12 +123,20 @@ function UserEditForm() {
           }
         }}
       />
+      <TextField
+        sx={{ ml: 3, mb: 3, width: "85%" }}
+        id="standard-basic"
+        label="Mobile Number"
+        variant="standard"
+        value={mobNo}
+      />
       {msg.name && <Typography sx={{ color: "#8B0000", ml: 3 }}>{msg.name}</Typography>}
       <TextField
         sx={{ ml: 3, mb: 3, width: "85%" }}
         id="standard-basic"
         label="Email*"
         variant="standard"
+        value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       {msg.email && <Typography sx={{ color: "#8B0000", ml: 3 }}>{msg.email}</Typography>}
