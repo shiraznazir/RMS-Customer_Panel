@@ -34,18 +34,8 @@ const AppBar = styled(MuiAppBar, {
 }));
 
 export default function Navbar() {
-
-  const [open, setOpen] = React.useState(false);
   
   const navigate = useNavigate() 
-  
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
 
   const dispatch = useDispatch();
 

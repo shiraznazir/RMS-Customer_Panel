@@ -4,6 +4,10 @@ export const getMenuItem = ()=> {
     return axios.get(`http://localhost:9000/menu`)
 }
 
+export const getMenuItemByRes = (id)=> {
+    return axios.get(`http://localhost:9000/menu//res-id/${id}`)
+}
+
 export const insertUser = (data)=> {
     // console.log("Sending user data :- ", data)
     return axios.post(`http://localhost:9000/user/send-otp`,data)

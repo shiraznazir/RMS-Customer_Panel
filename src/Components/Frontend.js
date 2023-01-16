@@ -25,6 +25,7 @@ import {
   getOrder,
   editOrder,
   getMenuItem,
+  getMenuItemByRes,
   getOrderByUserId,
   getOrderByStatus,
   deleteOrder,
@@ -99,10 +100,11 @@ function Frontend() {
   const id = open ? "simple-popover" : undefined;
 
   const fetchData = () => {
-    getMenuItem()
-      .then((val) => {
+    let id = 'res_4867'
+    getMenuItemByRes(id)
+      .then((res) => {
         //console.log(val.data);
-        dispatch(setMenuItems(val.data));
+        dispatch(setMenuItems(res.data));
       })
       .catch((err) => {
         console.log(err.message);
@@ -281,12 +283,9 @@ function Frontend() {
     fetchOrderByStatus();
   }, []);
 
-  // console.log("User in frontend>>>>>>>>>", user);
-
   return (
     <Box sx={{ bgcolor: "#fbfbfb", width: "100%", position: "absolute", mt: "50px" }}>
       <Grid container spacing={0}>
-        
         <Grid item xs={12} md={8}>
           {/* categories */}
           {/* <Grid container spacing={2} sx={{ width: '100%', margin: "1px" }}>
